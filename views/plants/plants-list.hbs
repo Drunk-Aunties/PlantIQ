@@ -1,0 +1,20 @@
+<h1>Your plants</h1>
+
+{{#each plants}}
+<section>
+    <h2>{{this.name}}</h2>
+    <p>
+        Registration Date: {{this.registrationDate}} <br />
+        Rating: {{this.rating}} <br />
+        <a href="/plants/{{this._id}}">More details</a>
+        {{!-- <a href="/plants/{{this._id}}/edit">Edit</a> --}}
+    </p>
+
+    <img src="{{this.picture}}" alt="" class="small-preview">
+
+    <form action="/plants/{{_id}}/delete" method="POST">
+        <button>Delete</button>
+    </form>
+    
+</section>
+{{/each}}
