@@ -13,8 +13,8 @@ const express = require("express");
 // https://www.npmjs.com/package/hbs
 const hbs = require("hbs");
 
-//Importing functions 
-const isLoggedIn = require('./middleware/isLoggedIn')
+//Importing functions
+const isLoggedIn = require("./middleware/isLoggedIn");
 
 const app = express();
 
@@ -25,6 +25,13 @@ const capitalize = require("./utils/capitalize");
 const projectName = "plant-iq";
 
 app.locals.appTitle = `${capitalize(projectName)} created with IronLauncher`;
+
+app.use((req, res, next) => {
+    if (req.session.currentUser) {
+        res.locals.currentUser = req.session.currentUser;
+    }
+    next();
+});
 
 // 👇 Start handling routes here
 const indexRoutes = require("./routes/index.routes");
@@ -40,4 +47,3 @@ app.use("/plants", isLoggedIn, plantRoutes);
 require("./error-handling")(app);
 
 module.exports = app;
-

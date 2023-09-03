@@ -7,9 +7,29 @@
     <title>{{appTitle}}</title>
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
+        <nav>
+          <div>
+            <a href="/">Home</a>
+            <a href="/plants">Plants</a>
+            <a href="/plants/create">Create New Plant</a>
+          </div>
+          <div>
+            {{#if currentUser}}
+            <div id="logged-in-nav">
+              <a href="/auth/user-profile">{{currentUser.username}}</a>
+              <form id="logout-form" action="/auth/logout" method="POST">
+                <button>Logout</button>
+              </form>
+            </div>
+            {{else}}
+            <a href="/auth/login">Login</a>
+            <a href="/auth/signup">Sign up</a>
+            {{/if}}
+          </div>
+        </nav>
 
   <body>
-
+    
     {{{body}}}
 
     <script src="/js/script.js"></script>
