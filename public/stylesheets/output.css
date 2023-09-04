@@ -534,8 +534,20 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.inline {
+  display: inline;
+}
+
 .h-10 {
   height: 2.5rem;
+}
+
+.h-12 {
+  height: 3rem;
+}
+
+.h-14 {
+  height: 3.5rem;
 }
 
 .border-gray-200 {
