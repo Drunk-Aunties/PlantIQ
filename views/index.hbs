@@ -1,4 +1,16 @@
 <h1>{{appTitle}} 🚀</h1>
+
+<form action="/search" method="get">
+	<input type="text" name="query" placeholder="Search for a plant">
+	<button type="submit">Search</button>
+</form>
+
+<div>
+	<button id="pageUpButton"><a href="/prev">Previous Page</a></button>
+	<button id="pageDownButton"><a href="/next">Next Page</a></button>
+</div>
+
+
 {{#each plants}}
 <section>
 	<h2>{{common_name}}</h2>
@@ -10,3 +22,5 @@
 
 </section>
 {{/each}}
+
+<script src="../public/js/client.js"></script>
