@@ -2,6 +2,9 @@ const express = require("express");
 const Plant = require("../models/Plant.model");
 const User = require("../models/User.model");
 const isLoggedIn = require("../middleware/isLoggedIn");
+const fileUploader = require('../config/cloudinary.config');
+
+
 
 const router = express.Router();
 
@@ -17,15 +20,22 @@ router.get("/", (req, res, next) => {
 // GET: get plant create form
 router.get("/create", (req, res, next) => {
     console.log("in the create route...");
-    res.send("in the create route...");
+    res.render("plants/plant-create.hbs");
 });
 
 // POST: create new plant in DB
-router.post("/create", (req, res, next) => {
+router.post("/create", fileUploader.single('picture'), (req, res, next) => {
     async function createNewPlant() {
-        const result = await Plant.create(req.body);
+        console.log(req.body);
+        const result = await Plant.create({
+            name:req.body.name,
+            registrationDate: req.body.registrationDate,
+            picture: req.file.path,
+            user: req.session.currentUser._id
+        });
         res.send("a new plant was probably created" + result);
     }
+    createNewPlant();
 });
 
 // GET: get single plant details
