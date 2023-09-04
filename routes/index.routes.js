@@ -115,7 +115,7 @@ router.get("/prev", async (req, res) => {
     });
 });
 
-router.get("/:plantId", (req, res, next) => {
+router.get("/list/:plantId", (req, res, next) => {
     const plantId = req.params.plantId;
     const plantDetails = res.locals.plantsArray.find(
         (plant) => plant.id == plantId
