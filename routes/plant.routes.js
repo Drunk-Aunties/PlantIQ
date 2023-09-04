@@ -33,7 +33,7 @@ router.post("/create", fileUploader.single('picture'), (req, res, next) => {
             picture: req.file.path,
             user: req.session.currentUser._id
         });
-        res.send("a new plant was probably created" + result);
+        res.redirect(`/plants/${result._id}`);
     }
     createNewPlant();
 });
