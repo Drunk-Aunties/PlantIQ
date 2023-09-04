@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev2":"npx tailwindcss -i ./public/stylesheets/main.css -o ./public/stylesheets/output.css --watch",
+    "dev2": "npx tailwindcss -i ./public/stylesheets/main.css -o ./public/stylesheets/output.css --watch",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
@@ -17,6 +17,7 @@
     "hbs": "^4.2.0",
     "mongoose": "^7.5.0",
     "morgan": "^1.10.0",
+    "node-fetch": "^2.7.0",
     "serve-favicon": "^2.5.0",
     "tailwindcss": "^3.3.3"
   },
