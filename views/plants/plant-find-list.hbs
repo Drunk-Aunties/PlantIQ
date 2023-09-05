@@ -1,0 +1,12 @@
+{{#each underResult}}
+<section>
+	<h2>{{this.scientificName}}</h2>
+	<h2>{{this.organ}}</h2>
+	<img src="{{this.images}}" alt="" class="small-preview">
+	<p>
+		<a href="/list/{{this.score}}">More details</a>
+	</p>
+
+</section>
+{{/each}}
+
