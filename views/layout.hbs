@@ -10,30 +10,9 @@
   <link rel="stylesheet" href="/stylesheets/output.css">
   <link rel="stylesheet" href="/stylesheets/main.css" />
 </head>
-{{!-- <nav>
-  <div>
-    <a href="/"><img src="/images/logo-flat.png" alt="PlantIQ Logo" class="h-14 inline"></a>
-    <a href="/plants">Plants</a>
-    <a href="/plants/create">Create New Plant</a>
-  </div>
-  <div>
-    {{#if currentUser}}
-    <div id="logged-in-nav">
-      <a href="/auth/user-profile">{{currentUser.username}}</a>
-      <form id="logout-form" action="/auth/logout" method="POST">
-        <button>Logout</button>
-      </form>
-    </div>
-    {{else}}
-    <a href="/auth/login">Login</a>
-    <a href="/auth/signup">Sign up</a>
-    {{/if}}
-  </div>
-</nav> --}}
 
-
-
-<nav class="bg-green-100">
+<header>
+  <nav class="bg-green-100">
   <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-5">
     <a href="/" class="flex items-center">
       <img src="/images/logo-flat.png" class="h-16" alt="PlantIQ Logo" />
@@ -52,45 +31,41 @@
         class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
         <li>
           <a href="/"
-            class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+            class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-green-700 md:p-0 dark:text-white md:dark:text-green-500"
             aria-current="page">Home</a>
         </li>
-        <li>
+
+          {{#if currentUser}}
+                  <li>
           <a href="/plants"
-            class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">My
+            class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">My
             Plants</a>
         </li>
-        <div>
-          {{#if currentUser}}
 
           <li>
-            <a href="/auth/user-profile"
-              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Logout</a>
+            <a href="/auth/logout"
+              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Logout</a>
           </li>
           <li>
             {{else}}
           <li>
             <a href="/auth/login"
-              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Login</a>
+              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Login</a>
           </li>
           <li>
-            <a href="/auth/login"
-              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Sign
-              up</a>
+            <a href="/auth/user-profile"
+              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Sign up</a>
           </li>
           {{/if}}
-        </div>
+
 
       </ul>
     </div>
   </div>
 </nav>
-
-
-
+</header>
 
 <body>
-  <p class="bg-blue"></p>
 
   {{{body}}}
 
@@ -98,5 +73,19 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 
 </body>
+
+
+<footer class="bg-green-200 rounded-lg shadow m-4 dark:bg-gray-800">
+    <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
+      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a href="https://www.linkedin.com/in/sandrine-manel/" class="hover:underline">Sandrine™</a>. All Rights Reserved.
+    </span>
+    <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
+        <li>
+            <a href="mailto:sandrine.manel@gmail.com" class="hover:underline">Contact</a>
+        </li>
+    </ul>
+    </div>
+</footer>
+
 
 </html>
