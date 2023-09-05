@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-    padding: 50px;
+    padding-left: 0;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -16,18 +16,6 @@ h1 {
 }
 .small-preview {
     max-height: 150px;
-}
-nav {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding-top: 1rem;
-    margin-bottom: 3rem;
-}
-
-nav a {
-    padding: 0 1rem;
-    text-decoration: none;
 }
 
 #logged-in-nav {

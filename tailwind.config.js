@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./views/layout.hbs","./views/plants/plant-create.hbs"],
+  content: ["./views","./views/plants/plant-create.hbs","./views/plants/plants-list.hbs"],
   theme: {
     extend: {},
   },

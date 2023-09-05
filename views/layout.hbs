@@ -1,43 +1,107 @@
 <html lang="en">
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>{{appTitle}}</title>
-        <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css"/>
-    <link href="https://unpkg.com/@tailwindcss/custom-forms/dist/custom-forms.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/stylesheets/output.css">
-    <link rel="stylesheet" href="/stylesheets/main.css" />
-  </head>
-        <nav>
-          <div>
-            <a href="/"><img src="/images/logo-flat.png" alt="PlantIQ Logo" class="h-14 inline"></a>
-            <a href="/plants">Plants</a>
-            <a href="/plants/create">Create New Plant</a>
-            <a href="/plants/knowyourplant">Learn Your Plant</a>
-          </div>
-          <div>
-            {{#if currentUser}}
-            <div id="logged-in-nav">
-              <a href="/auth/user-profile">{{currentUser.username}}</a>
-              <form id="logout-form" action="/auth/logout" method="POST">
-                <button>Logout</button>
-              </form>
-            </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>{{appTitle}}</title>
+  <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" />
+  <link href="https://unpkg.com/@tailwindcss/custom-forms/dist/custom-forms.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheets/output.css">
+  <link rel="stylesheet" href="/stylesheets/main.css" />
+</head>
+{{!-- <nav>
+  <div>
+    <a href="/"><img src="/images/logo-flat.png" alt="PlantIQ Logo" class="h-14 inline"></a>
+    <a href="/plants">Plants</a>
+    <a href="/plants/create">Create New Plant</a>
+  </div>
+  <div>
+    {{#if currentUser}}
+    <div id="logged-in-nav">
+      <a href="/auth/user-profile">{{currentUser.username}}</a>
+      <form id="logout-form" action="/auth/logout" method="POST">
+        <button>Logout</button>
+      </form>
+    </div>
+    {{else}}
+    <a href="/auth/login">Login</a>
+    <a href="/auth/signup">Sign up</a>
+    {{/if}}
+  </div>
+</nav> --}}
+
+
+
+<nav class="bg-green-100">
+  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-5">
+    <a href="/" class="flex items-center">
+      <img src="/images/logo-flat.png" class="h-16" alt="PlantIQ Logo" />
+    </a>
+    <button data-collapse-toggle="navbar-default" type="button"
+      class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+      aria-controls="navbar-default" aria-expanded="false">
+      <span class="sr-only">Open main menu</span>
+      <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M1 1h15M1 7h15M1 13h15" />
+      </svg>
+    </button>
+    <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+      <ul
+        class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+        <li>
+          <a href="/"
+            class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+            aria-current="page">Home</a>
+        </li>
+        <li>
+          <a href="/plants"
+            class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">My
+            Plants</a>
+        </li>
+         <li>
+           <a href="/plants/knowyourplant"
+            class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:bord md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray dark:hover:text-white md:dark:hover:bg-transparent">Learn Your Plant</a>
+        </li>
+
+        <div>
+          {{#if currentUser}}
+
+          <li>
+            <a href="/auth/user-profile"
+              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Logout</a>
+          </li>
+          <li>
             {{else}}
-            <a href="/auth/login">Login</a>
-            <a href="/auth/signup">Sign up</a>
-            {{/if}}
-          </div>
-        </nav>
+          <li>
+            <a href="/auth/login"
+              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Login</a>
+          </li>
+          <li>
+            <a href="/auth/login"
+              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Sign
+              up</a>
+          </li>
+          {{/if}}
+        </div>
 
-  <body>
-    <p class="bg-blue"></p>
-    
-    {{{body}}}
+      </ul>
+    </div>
+  </div>
+</nav>
 
-    <script src="/js/script.js"></script>
-  </body>
+
+
+
+<body>
+  <p class="bg-blue"></p>
+
+  {{{body}}}
+
+  <script src="/js/script.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+
+</body>
 
 </html>

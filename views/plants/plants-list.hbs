@@ -1,20 +1,27 @@
 <h1>Your plants</h1>
 
-{{#each plants}}
-<section>
-    <h2>{{this.name}}</h2>
-    <p>
-        Registration Date: {{this.registrationDate}} <br />
-        Rating: {{this.rating}} <br />
-        <a href="/plants/{{this._id}}">More details</a>
-        {{!-- <a href="/plants/{{this._id}}/edit">Edit</a> --}}
-    </p>
+<div class="flex flex-wrap justify-center mt-10">
 
-    <img src="{{this.picture}}" alt="" class="small-preview">
-
-    <form action="/plants/{{_id}}/delete" method="POST">
-        <button>Delete</button>
-    </form>
-    
-</section>
+   {{#each plants}}
+<!-- card 1 -->
+    <div class="p-4 max-w-xs">
+        <div class="flex rounded-lg h-80 p-8 flex-col shadow-2xl">
+            <div class="flex items-center mb-4 shadow-lg">
+                    <img src="{{this.picture}}" alt="" class="rounded-lg h-20">    
+            </div>
+            <div class="flex flex-col justify-between flex-grow">
+                <h2 class="text-black text-lg text-center font-bold">{{this.name}}</h2>
+                <p class="leading-relaxed text-base text-black">Blue bottle crucifix vinyl post-ironic four dollar
+                    toast vegan taxidermy. Gastropub indxgo juice poutine.</p>
+                <a href="/plants/{{this._id}}" class="mt-3 text-black hover:text-blue-600 inline-flex items-center">Details
+                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
 {{/each}}
+
+</div>
