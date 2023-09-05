@@ -2,14 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    padding-left: 0;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+html {
+    font: 14px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
 a {
     color: #00b7ff;
 }
+
 
 h1 {
     color: 15px;
