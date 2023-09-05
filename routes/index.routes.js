@@ -116,20 +116,7 @@ router.get("/prev", async (req, res) => {
     });
 });
 
-router.get("/list/:plantId", (req, res, next) => {
-    const plantId = req.params.plantId;
-    async function ListApiPlants() {
-        const plantsArray = await fetchPlantData();
-        const plantDetails = plantsArray.find((plant) => plant.id == plantId);
 
-        if (plantDetails) {
-            res.render("plants/api-plant-details.hbs", plantDetails);
-        } else {
-            res.status(404).send("Plant not found");
-        }
-    }
-    ListApiPlants();
-});
 
 router.post("/list/create", async (req, res, next) => {
     try {
@@ -148,6 +135,21 @@ router.post("/list/create", async (req, res, next) => {
         console.error("Error creating plant:", error.message);
         next(error);
     }
+});
+
+router.get("/list/:plantId", (req, res, next) => {
+    const plantId = req.params.plantId;
+    async function ListApiPlants() {
+        const plantsArray = await fetchPlantData();
+        const plantDetails = plantsArray.find((plant) => plant.id == plantId);
+
+        if (plantDetails) {
+            res.render("plants/api-plant-details.hbs", plantDetails);
+        } else {
+            res.status(404).send("Plant not found");
+        }
+    }
+    ListApiPlants();
 });
 
 module.exports = router;

@@ -20,6 +20,7 @@ const plantSchema = new Schema(
             description: String,
             date:Date
             }],
+        blabla:String,
         user: 
         {
             type: Schema.Types.ObjectId,
