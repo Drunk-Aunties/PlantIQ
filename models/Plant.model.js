@@ -8,6 +8,7 @@ const plantSchema = new Schema(
             required: true,
             trim: true,
         },
+        imageRecName: [],
         registrationDate: {
             type: Date,
             required: true,
@@ -15,18 +16,18 @@ const plantSchema = new Schema(
         picture: {
             type: String,
         },
-        history: [{
-            category: String,
-            description: String,
-            date:Date
-            }],
-        blabla:String,
-        user: 
-        {
+        history: [
+            {
+                category: String,
+                description: String,
+                date: Date,
+            },
+        ],
+        user: {
             type: Schema.Types.ObjectId,
-            ref: "User"
-        } 
+            ref: "User",
         },
+    },
     {
         // this second object adds extra properties: `createdAt` and `updatedAt`
         timestamps: true,

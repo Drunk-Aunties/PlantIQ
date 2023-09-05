@@ -16,6 +16,47 @@ router.get("/", (req, res, next) => {
 });
 
 // GET: get plant create form
+router.get("/knowyourplant", (req, res, next) => {
+    res.render("plants/plant-find.hbs");
+});
+
+// POST: create new plant in DB
+router.post(
+    "/knowyourplant",
+    fileUploader.single("picture"),
+    (req, res, next) => {
+        function getIdentification(picture) {
+            return fetch(
+                `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=2b10pwICSS2Bx5QusceP0ioDHe`
+            )
+                .then((result) => result.json())
+                .then((final) => final.results);
+        }
+
+        function together() {
+            getIdentification(req.file.path)
+                .then((plantType) => {
+                    const underResult = plantType.map((element) => {
+                        const images = element.images[0].url.m; // Assuming you want the first image URL
+                        const organ = element.organ;
+                        const scientificName =
+                            element.species.scientificNameWithoutAuthor;
+                        const score = element.score;
+                        return { scientificName, organ, images, score };
+                    });
+
+                    res.render("plants/plant-find-list.hbs", { underResult });
+                })
+                .catch((error) => {
+                    console.error(error);
+                    res.status(500).send("An error occurred.");
+                });
+        }
+        together();
+    }
+);
+
+// GET: get plant create form
 router.get("/create", (req, res, next) => {
     console.log("in the create route...");
     res.render("plants/plant-create.hbs");
@@ -24,35 +65,44 @@ router.get("/create", (req, res, next) => {
 // POST: create new plant in DB
 router.post("/create", fileUploader.single("picture"), (req, res, next) => {
     let plantType = "";
-    async function getIdentification(picture) {
-        const result = await fetch(
-            `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=false&no-reject=false&lang=en&api-key=2b10pwICSS2Bx5QusceP0ioDHe`
-        );
-        const final = await result.json();
-        plantType = final.bestMatch;
-        console.log(final.bestMatch);
-        return final.bestMatch;
-    }
-    //getIdentification(req.file.path);
-    //console.log(plantType);
 
-    async function createNewPlant() {
+    function getIdentification(picture) {
+        return fetch(
+            `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=false&no-reject=false&lang=en&api-key=2b10pwICSS2Bx5QusceP0ioDHe`
+        )
+            .then((result) => result.json())
+            .then((final) => {
+                plantType = final;
+                console.log(final);
+                return final;
+            });
+    }
+
+    function createNewPlant() {
         console.log(req.body);
-        const result = await Plant.create({
+        return Plant.create({
             name: req.body.name,
             registrationDate: req.body.registrationDate,
             picture: req.file.path,
             user: req.session.currentUser._id,
-            blabla: plantType,
+            imageRecName: plantType.bestMatch,
         });
-        res.redirect(`/plants/${result._id}`);
     }
-    //createNewPlant();
 
-    async function together() {
-        await getIdentification(req.file.path);
-        await createNewPlant();
+    function together() {
+        getIdentification(req.file.path)
+            .then(() => createNewPlant())
+            .then((result) => {
+                res.redirect(`/plants/${result._id}`);
+            })
+            .catch((error) => {
+                // Handle any errors that occurred in either of the functions
+                console.error(error);
+                // You may want to send an error response to the client here
+                res.status(500).send("An error occurred.");
+            });
     }
+
     together();
 });
 

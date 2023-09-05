@@ -116,40 +116,55 @@ router.get("/prev", async (req, res) => {
     });
 });
 
-
-
-router.post("/list/create", async (req, res, next) => {
-    try {
-        const plantsArray = await fetchPlantData(counter);
-        const { common_name, image_url, id } = plantsArray[0];
-
-        const result = await Plant.create({
-            name: common_name,
-            registrationDate: req.body.registrationDate,
-            picture: image_url,
-            user: req.session.currentUser._id,
-        });
-
-        res.redirect(`/plants/list/${result.id}`);
-    } catch (error) {
-        console.error("Error creating plant:", error.message);
-        next(error);
-    }
-});
-
 router.get("/list/:plantId", (req, res, next) => {
     const plantId = req.params.plantId;
-    async function ListApiPlants() {
-        const plantsArray = await fetchPlantData();
-        const plantDetails = plantsArray.find((plant) => plant.id == plantId);
+    const plantDetails = res.locals.plantsArray.find(
+        (plant) => plant.id == plantId
+    );
 
-        if (plantDetails) {
-            res.render("plants/api-plant-details.hbs", plantDetails);
-        } else {
-            res.status(404).send("Plant not found");
+    if (plantDetails) {
+        res.render("plants/api-plant-details.hbs", plantDetails);
+    } else {
+        res.status(404).send("Plant not found");
+        async function ListApiPlants() {
+            const plantsArray = await fetchPlantData();
+            const plantDetails = plantsArray.find(
+                (plant) => plant.id == plantId
+            );
+
+            if (plantDetails) {
+                res.render("plants/api-plant-details.hbs", plantDetails);
+            } else {
+                res.status(404).send("Plant not found");
+            }
         }
+        ListApiPlants();
     }
-    ListApiPlants();
 });
 
+router.post("/list/create", (req, res, next) => {
+    fetchPlantData()
+        .then((plantsArray) => {
+            console.log(plantsArray);
+            const { common_name, image_url } = plantsArray[0];
+
+            Plant.create({
+                name: common_name,
+                registrationDate: req.body.registrationDate,
+                picture: image_url,
+                user: req.session.currentUser._id,
+            })
+                .then((result) => {
+                    res.redirect(`/plants/list/${result._id}`);
+                })
+                .catch((error) => {
+                    console.error("Error creating plant:", error.message);
+                    next(error);
+                });
+        })
+        .catch((error) => {
+            console.error("Error fetching plant data: " + error.message);
+            next(error);
+        });
+});
 module.exports = router;
