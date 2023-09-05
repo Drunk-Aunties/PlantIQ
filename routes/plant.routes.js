@@ -2,9 +2,7 @@ const express = require("express");
 const Plant = require("../models/Plant.model");
 const User = require("../models/User.model");
 const isLoggedIn = require("../middleware/isLoggedIn");
-const fileUploader = require('../config/cloudinary.config');
-
-
+const fileUploader = require("../config/cloudinary.config");
 
 const router = express.Router();
 
@@ -24,18 +22,38 @@ router.get("/create", (req, res, next) => {
 });
 
 // POST: create new plant in DB
-router.post("/create", fileUploader.single('picture'), (req, res, next) => {
+router.post("/create", fileUploader.single("picture"), (req, res, next) => {
+    let plantType = "";
+    async function getIdentification(picture) {
+        const result = await fetch(
+            `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=false&no-reject=false&lang=en&api-key=2b10pwICSS2Bx5QusceP0ioDHe`
+        );
+        const final = await result.json();
+        plantType = final.bestMatch;
+        console.log(final.bestMatch);
+        return final.bestMatch;
+    }
+    //getIdentification(req.file.path);
+    //console.log(plantType);
+
     async function createNewPlant() {
         console.log(req.body);
         const result = await Plant.create({
-            name:req.body.name,
+            name: req.body.name,
             registrationDate: req.body.registrationDate,
             picture: req.file.path,
-            user: req.session.currentUser._id
+            user: req.session.currentUser._id,
+            blabla: plantType,
         });
         res.redirect(`/plants/${result._id}`);
     }
-    createNewPlant();
+    //createNewPlant();
+
+    async function together() {
+        await getIdentification(req.file.path);
+        await createNewPlant();
+    }
+    together();
 });
 
 // GET: get single plant details

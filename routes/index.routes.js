@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const https = require("https");
+const Plant = require("../models/Plant.model");
 
 let counter = 1;
 
@@ -106,7 +107,7 @@ router.get("/next", async (req, res) => {
 router.get("/prev", async (req, res) => {
     counter--;
     if (counter < 1) {
-        counter = 1; // Ensure the counter doesn't go below 1
+        counter = 1;
     }
     const plantsArray = await fetchPlantData(counter);
     res.render("index", {
@@ -117,14 +118,35 @@ router.get("/prev", async (req, res) => {
 
 router.get("/list/:plantId", (req, res, next) => {
     const plantId = req.params.plantId;
-    const plantDetails = res.locals.plantsArray.find(
-        (plant) => plant.id == plantId
-    );
+    async function ListApiPlants() {
+        const plantsArray = await fetchPlantData();
+        const plantDetails = plantsArray.find((plant) => plant.id == plantId);
 
-    if (plantDetails) {
-        res.render("plants/api-plant-details.hbs", plantDetails);
-    } else {
-        res.status(404).send("Plant not found");
+        if (plantDetails) {
+            res.render("plants/api-plant-details.hbs", plantDetails);
+        } else {
+            res.status(404).send("Plant not found");
+        }
+    }
+    ListApiPlants();
+});
+
+router.post("/list/create", async (req, res, next) => {
+    try {
+        const plantsArray = await fetchPlantData(counter);
+        const { common_name, image_url, id } = plantsArray[0];
+
+        const result = await Plant.create({
+            name: common_name,
+            registrationDate: req.body.registrationDate,
+            picture: image_url,
+            user: req.session.currentUser._id,
+        });
+
+        res.redirect(`/plants/list/${result.id}`);
+    } catch (error) {
+        console.error("Error creating plant:", error.message);
+        next(error);
     }
 });
 
