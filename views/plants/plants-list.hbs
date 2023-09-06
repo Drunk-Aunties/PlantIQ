@@ -1,20 +1,17 @@
 <div class="relative">
     <div class="flex flex-col items-center justify-center gap-5">
-    <br>
-    <br>
+        <br>
+        <br>
     <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900">Your plants</h1>
-    <a href="/plants/create">
-<button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full">
+        <a href="/plants/create">
+    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full">
         Connect with a new plant
     </button></a>
-
 </div>
-
    {{#if plants}}
    <div class="flex flex-wrap justify-center mt-10">
 
    {{#each plants}}
-<!-- card 1 -->
     <div class="p-4 max-w-xs">
         <div class="flex rounded-lg h-80 p-8 flex-col shadow-2xl">
             <div class="flex items-center mb-4 shadow-lg">
@@ -35,10 +32,8 @@
     </div>
 {{/each}}
 
-</div>
 {{else}}
-
 <p> Oops! it seems like you did not register any plants yet!</p>
-    {{/if}}
-
+{{/if}}
+</div>
 

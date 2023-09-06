@@ -3,21 +3,15 @@
 @tailwind utilities;
 
 html {
-    font: 14px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font: 14px "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 a {
     color: #00b7ff;
 }
-
 
 h1 {
     color: 15px;
 }
 .small-preview {
     max-height: 150px;
-}
-
-#logged-in-nav {
-    display: flex;
-    flex-direction: row;
 }

@@ -46,18 +46,18 @@ router.post(
                     const organ = plantType.organ;
                     const takenImage = plantType.query.images[0];
 
-                    const plantData = []; // Create an array to store the data
+                    const plantData = [];
 
                     recArr.forEach((element) => {
                         const images = element.images[0].url.m;
                         const scientificName =
                             element.species.scientificNameWithoutAuthor;
                         const score = element.score;
-                        plantData.push({ scientificName, images, score }); // Add data to the array
+                        plantData.push({ scientificName, images, score });
                     });
 
                     res.render("plants/plant-find-list.hbs", {
-                        plantData, // Pass the array of data to the template
+                        plantData,
                         organ,
                         name,
                         takenImage,
@@ -97,12 +97,11 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
         getIdentification(req.file.path)
             .then((identifiedArray) => {
                 const recArr = identifiedArray.results;
-                const plantNames = []; // Create an array to store the data
-
+                const plantNames = [];
                 recArr.forEach((element) => {
                     const scientificName =
                         element.species.scientificNameWithoutAuthor;
-                    plantNames.push(scientificName); // Add data to the array
+                    plantNames.push(scientificName);
                 });
 
                 const query = plantNames.toString();
@@ -154,9 +153,7 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
                 res.redirect(`/plants/${result._id}`);
             })
             .catch((error) => {
-                // Handle any errors that occurred in either of the functions
                 console.error(error);
-                // You may want to send an error response to the client here
                 res.status(500).send("An error occurred.");
             });
     }
@@ -168,7 +165,6 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
 router.get("/:plantId", (req, res, next) => {
     async function getPlantDetails() {
         const result = await Plant.findById({ _id: req.params.plantId });
-        // console.log(result);
         res.render("plants/plant-details.hbs", result);
     }
     getPlantDetails();
