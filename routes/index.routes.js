@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const https = require("https");
 const Plant = require("../models/Plant.model");
+const axios = require("axios");
 
 let counter = 1;
 
@@ -77,7 +78,6 @@ router.get("/search", async (req, res) => {
 
     try {
         const plantsArray = await fetchPlantDataByQuery(query);
-        console.log(plantsArray);
         res.render("index", {
             plants: plantsArray,
             counter: counter,
@@ -142,31 +142,38 @@ router.get("/list/:plantId", (req, res, next) => {
     }
 });
 
-router.post("/list/create", (req, res, next) => {
-    fetchPlantData()
-        .then((plantsArray) => {
-            console.log(plantsArray);
-            const { common_name, image_url } = plantsArray[0];
-            let today = new Date();
-            today = today.toISOString().substr(0, 10);
+router.post("/plants/:plantId", (req, res, next) => {
+    const plantId = req.params.plantId;
+    console.log(plantId);
+    axios
+        .get(
+            `https://trefle.io/api/v1/plants?token=${process.env.MY_PLANT_KEY}&filter[id]=${plantId}`
+        )
+        .then((response) => {
+            const plantInfo = response.data.data;
+            const selectedPlant = plantInfo.filter(
+                (element) => element.id == plantId
+            );
+            const plantObject = selectedPlant[0];
 
-            Plant.create({
-                name: common_name,
-                registrationDate: today,
-                picture: image_url,
+            if (!plantInfo) {
+                throw new Error("No plant data found.");
+            }
+            return Plant.create({
+                registrationDate: req.body.registrationDate,
+                picture: plantObject.image_url,
                 user: req.session.currentUser._id,
-            })
-                .then((result) => {
-                    res.redirect(`/plants/${result._id}`);
-                })
-                .catch((error) => {
-                    console.error("Error creating plant:", error.message);
-                    next(error);
-                });
+                name: plantObject.common_name,
+                imageRecName: plantObject.scientific_name,
+            });
+        })
+        .then((result) => {
+            res.redirect(`/plants/${result._id}`);
         })
         .catch((error) => {
-            console.error("Error fetching plant data: " + error.message);
+            console.error("Error creating plant:", error.message);
             next(error);
         });
 });
+
 module.exports = router;
