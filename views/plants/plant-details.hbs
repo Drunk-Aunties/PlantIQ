@@ -1,6 +1,10 @@
-<h1>{{name}}</h1>
+{{#if name}}
+<h1>My name is {{name}}!</h1>
+{{/if}}
 
-<img src="https://chart.googleapis.com/chart?cht=qr&chl=http://127.0.0.1:3000/plants/{{_id}}&chs=150x150" alt="Plant QR Code">
+
+
+
 
 <h2>Scientific Name: {{imageRecName}}</h2>
 <h2>Family Name: {{familyName}}</h2>
@@ -19,3 +23,5 @@
 <hr />
 
 <a href="/plants">Back</a>
+
+<img src="https://chart.googleapis.com/chart?cht=qr&chl=http://127.0.0.1:3000/plants/{{_id}}&chs=150x150" alt="Plant QR Code">

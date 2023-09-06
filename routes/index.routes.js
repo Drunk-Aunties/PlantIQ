@@ -5,6 +5,7 @@ const Plant = require("../models/Plant.model");
 const axios = require("axios");
 
 let counter = 1;
+let plantsArrRef = [];
 
 async function fetchPlantData(page) {
     return new Promise((resolve, reject) => {
@@ -36,8 +37,6 @@ async function fetchPlantData(page) {
 
 router.use(async (req, res, next) => {
     try {
-        const plantsArray = await fetchPlantData(counter);
-        res.locals.plantsArray = plantsArray;
         next();
     } catch (error) {
         console.error("Error fetching plant data: " + error.message);
@@ -51,7 +50,7 @@ router.get("/search", async (req, res) => {
     async function fetchPlantDataByQuery(query) {
         return new Promise((resolve, reject) => {
             https.get(
-                `https://trefle.io/api/v1/plants?token=${process.env.MY_PLANT_KEY}&filter[common_name]=${query}`,
+                `https://trefle.io/api/v1/plants/search?token=${process.env.MY_PLANT_KEY}&q=${query}`,
                 (resp) => {
                     let data = "";
 
@@ -78,6 +77,7 @@ router.get("/search", async (req, res) => {
 
     try {
         const plantsArray = await fetchPlantDataByQuery(query);
+        plantsArrRef = plantsArray;
         res.render("index", {
             plants: plantsArray,
             counter: counter,
@@ -89,10 +89,15 @@ router.get("/search", async (req, res) => {
 });
 
 router.get("/", (req, res) => {
-    res.render("index", {
-        plants: res.locals.plantsArray,
-        counter: counter,
-    });
+    async function initiateLocal () {
+        const plantsArray = await fetchPlantData(counter);
+        plantsArrRef = plantsArray;
+        res.render("index", {
+            plants: plantsArrRef,
+            counter: counter,
+        });
+    }
+    initiateLocal();
 });
 
 router.get("/next", async (req, res) => {
@@ -118,7 +123,8 @@ router.get("/prev", async (req, res) => {
 
 router.get("/list/:plantId", (req, res, next) => {
     const plantId = req.params.plantId;
-    const plantDetails = res.locals.plantsArray.find(
+    console.log(plantsArrRef)
+    const plantDetails = plantsArrRef.find(
         (plant) => plant.id == plantId
     );
 
