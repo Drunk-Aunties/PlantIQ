@@ -1,6 +1,58 @@
-<form action="/plants/knowyourplant" method="POST" enctype="multipart/form-data">
-	<h2>Find your Plant</h2>
-	<label for="picture">Plant Image:</label>
-    <input type="file" id="picture" name="picture" accept="image/*" capture="user" required>
-	<button type="submit">Find Plant</button>
-</form>
+<div class="min-h-screen flex flex-col items-center justify-start mt-16">
+	<form action="/plants/knowyourplant" method="POST" enctype="multipart/form-data"
+		class="max-w-90p w-full p-6 bg-green-200 rounded-lg shadow-md text-center">
+		<h2 class="text-2xl font-semibold mb-4">Find your Plant</h2>
+		<div class="mb-6">
+			<label for="picture" class="block text-gray-700 font-medium">Plant Image:</label>
+			<br />
+			<div class="relative mt-2">
+				<label
+					class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer transition duration-300 ease-in-out">
+					Choose File
+					<input type="file" id="picture" name="picture" accept="image/*" capture="user" required
+						class="hidden" onchange="displayImagePreview(this)">
+				</label>
+			</div>
+		</div>
+		<div id="selectedFileName" class="mt-4 text-green-600 font-medium"></div>
+		<!-- Display selected file name here -->
+		<div id="imagePreviewContainer" class="mt-4 text-center flex justify-center"></div>
+		<!-- Center image horizontally -->
+		<div class="mt-10 mx-auto w-80"> <!-- Set button width to 60% of the card -->
+			<button type="submit"
+				class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 ease-in-out w-full">Find
+				Plant</button> <!-- Changed button color to green and set width to 60% -->
+		</div>
+		<div class="mt-4">
+			<button type="reset"
+				class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300 ease-in-out mx-auto">Clear</button>
+		</div>
+	</form>
+</div>
+
+<script>
+	function displayImagePreview(input) {
+		const selectedFileName = document.getElementById('selectedFileName');
+		const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+		if (input.files.length > 0) {
+			const file = input.files[0];
+			selectedFileName.textContent = `Selected Image: ${file.name}`;
+
+			// Display the image preview
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				const img = document.createElement('img');
+				img.src = event.target.result;
+				img.style.maxWidth = '20vw'; // Set maximum width to fit container
+				img.style.height = 'auto';   // Maintain aspect ratio
+				imagePreviewContainer.innerHTML = '';
+				imagePreviewContainer.appendChild(img);
+			};
+			reader.readAsDataURL(file);
+		} else {
+			selectedFileName.textContent = '';
+			imagePreviewContainer.innerHTML = '';
+		}
+	}
+</script>

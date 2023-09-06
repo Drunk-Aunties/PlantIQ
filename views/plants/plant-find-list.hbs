@@ -1,16 +1,26 @@
-<h1>Name: {{this.name}} </h1>
-	<img src="{{this.takenImage}}" alt="" class="small-preview">
-<br/>
-<hr/>
+<div class="container mx-auto p-4">
+	<div class="text-center"> <!-- Center the this.name property -->
+		<h1 class="text-2xl font-bold mb-4">Name: {{this.name}}</h1>
+	</div>
+	<img src="{{this.takenImage}}" alt="" class="small-preview mb-4 mx-auto"> <!-- Center the takenImage -->
+	<hr class="my-4">
 
-<h2>The Similiar Plants</h2>
-{{#each plantData}}
-<section>
-	<h2>{{this.scientificName}}</h2>
-	<h3>Matching Score: {{score}}</h3>
-	<h3>{{this.organ}}</h3>
-	<img src="{{this.images}}" alt="" class="small-preview">
+	<h2 class="text-xl font-bold mb-8">The Similar Plants</h2>
 
-</section>
-{{/each}}
-
+	<div class="flex flex-wrap -mx-4">
+		{{#each plantData}}
+		<div class="w-1/3 px-4 mb-4">
+			<div class="bg-white rounded-lg shadow-md p-4 flex">
+				<div class="w-1/2 flex flex-col justify-center">
+					<h2 class="text-lg font-semibold">{{this.scientificName}}</h2>
+					<h3 class="text-sm text-gray-600 mb-2">Matching Score: {{score}}</h3>
+					<h3 class="text-base">{{this.organ}}</h3>
+				</div>
+				<div class="w-1/2">
+					<img src="{{this.images}}" alt="" class="small-preview mt-2 mx-auto"> <!-- Center the image -->
+				</div>
+			</div>
+		</div>
+		{{/each}}
+	</div>
+</div>

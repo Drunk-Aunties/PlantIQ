@@ -4,8 +4,10 @@ const User = require("../models/User.model");
 const isLoggedIn = require("../middleware/isLoggedIn");
 const fileUploader = require("../config/cloudinary.config");
 const https = require("https");
-
 const router = express.Router();
+
+const apiKey = "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";
+const message = "Hello, ChatGPT!";
 
 // GET: get all plants
 router.get("/", (req, res, next) => {
@@ -133,8 +135,7 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
             })
             .then((plantsFromTrefle) => {
                 const plantInfo = plantType.results[0];
-                console.log(plantType.results[0]);
-                let today= new Date();
+                let today = new Date();
                 today = today.toISOString().substr(0, 10);
                 return Plant.create({
                     name: req.body.name,
@@ -143,7 +144,8 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
                     user: req.session.currentUser._id,
                     species: plantInfo.species.scientificNameWithoutAuthor,
                     genus: plantInfo.species.genus.scientificNameWithoutAuthor,
-                    familyName: plantInfo.species.family.scientificNameWithoutAuthor,
+                    familyName:
+                        plantInfo.species.family.scientificNameWithoutAuthor,
                     commonNames: plantInfo.species.commonNames,
                     imageRecName: plantType.bestMatch,
                 });
