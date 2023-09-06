@@ -5,11 +5,14 @@ const plantSchema = new Schema(
     {
         name: {
             type: String,
-            required: true,
+            required: false,
             trim: true,
         },
         imageRecName: String,
         familyName: String,
+        species: String,
+        genus: String,
+        commonNames: [String],
         registrationDate: {
             type: Date,
         },

@@ -132,15 +132,20 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
                 });
             })
             .then((plantsFromTrefle) => {
-                const plantInfo = plantsFromTrefle[0];
-                console.log(plantInfo);
+                const plantInfo = plantType.results[0];
+                console.log(plantType.results[0]);
+                let today= new Date();
+                today = today.toISOString().substr(0, 10);
                 return Plant.create({
                     name: req.body.name,
-                    registrationDate: req.body.registrationDate,
+                    registrationDate: today,
                     picture: req.file.path,
                     user: req.session.currentUser._id,
-                    familyName: plantInfo.common_name,
-                    imageRecName: plantInfo.scientific_name,
+                    species: plantInfo.species.scientificNameWithoutAuthor,
+                    genus: plantInfo.species.genus.scientificNameWithoutAuthor,
+                    familyName: plantInfo.species.family.scientificNameWithoutAuthor,
+                    commonNames: plantInfo.species.commonNames,
+                    imageRecName: plantType.bestMatch,
                 });
             })
             .then((result) => {
