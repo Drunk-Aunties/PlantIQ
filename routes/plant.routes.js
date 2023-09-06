@@ -91,8 +91,6 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
             });
     }
 
-    function createNewPlant() {}
-
     function together() {
         getIdentification(req.file.path)
             .then((identifiedArray) => {
@@ -135,13 +133,13 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
             })
             .then((plantsFromTrefle) => {
                 const plantInfo = plantsFromTrefle[0];
-                console.log(plantInfo.synonyms);
+                console.log(plantInfo);
                 return Plant.create({
                     name: req.body.name,
                     registrationDate: req.body.registrationDate,
                     picture: req.file.path,
                     user: req.session.currentUser._id,
-                    familyName: plantInfo.family_common_name,
+                    familyName: plantInfo.common_name,
                     imageRecName: plantInfo.scientific_name,
                 });
             })

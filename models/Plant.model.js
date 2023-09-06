@@ -12,7 +12,6 @@ const plantSchema = new Schema(
         familyName: String,
         registrationDate: {
             type: Date,
-            required: true,
         },
         picture: {
             type: String,
