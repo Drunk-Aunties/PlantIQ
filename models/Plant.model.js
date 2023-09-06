@@ -8,7 +8,8 @@ const plantSchema = new Schema(
             required: true,
             trim: true,
         },
-        imageRecName: [],
+        imageRecName: String,
+        familyName: String,
         registrationDate: {
             type: Date,
             required: true,

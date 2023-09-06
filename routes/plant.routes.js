@@ -3,6 +3,7 @@ const Plant = require("../models/Plant.model");
 const User = require("../models/User.model");
 const isLoggedIn = require("../middleware/isLoggedIn");
 const fileUploader = require("../config/cloudinary.config");
+const https = require("https");
 
 const router = express.Router();
 
@@ -81,30 +82,69 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
 
     function getIdentification(picture) {
         return fetch(
-            `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=false&no-reject=false&lang=en&api-key=2b10pwICSS2Bx5QusceP0ioDHe`
+            `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=2b10pwICSS2Bx5QusceP0ioDHe`
         )
             .then((result) => result.json())
             .then((final) => {
                 plantType = final;
-                console.log(final);
                 return final;
             });
     }
 
-    function createNewPlant() {
-        console.log(req.body);
-        return Plant.create({
-            name: req.body.name,
-            registrationDate: req.body.registrationDate,
-            picture: req.file.path,
-            user: req.session.currentUser._id,
-            imageRecName: plantType.bestMatch,
-        });
-    }
+    function createNewPlant() {}
 
     function together() {
         getIdentification(req.file.path)
-            .then(() => createNewPlant())
+            .then((identifiedArray) => {
+                const recArr = identifiedArray.results;
+                const plantNames = []; // Create an array to store the data
+
+                recArr.forEach((element) => {
+                    const scientificName =
+                        element.species.scientificNameWithoutAuthor;
+                    plantNames.push(scientificName); // Add data to the array
+                });
+
+                const query = plantNames.toString();
+
+                return new Promise((resolve, reject) => {
+                    https.get(
+                        `https://trefle.io/api/v1/plants?token=${process.env.MY_PLANT_KEY}&filter[scientific_name]=${query}`,
+                        (resp) => {
+                            let data = "";
+
+                            resp.on("data", (chunk) => {
+                                data += chunk;
+                            });
+
+                            resp.on("end", () => {
+                                try {
+                                    const jsonData = JSON.parse(data);
+                                    resolve(jsonData.data);
+                                } catch (error) {
+                                    reject(error);
+                                }
+                            });
+
+                            resp.on("error", (error) => {
+                                reject(error);
+                            });
+                        }
+                    );
+                });
+            })
+            .then((plantsFromTrefle) => {
+                const plantInfo = plantsFromTrefle[0];
+                console.log(plantInfo.synonyms);
+                return Plant.create({
+                    name: req.body.name,
+                    registrationDate: req.body.registrationDate,
+                    picture: req.file.path,
+                    user: req.session.currentUser._id,
+                    familyName: plantInfo.family_common_name,
+                    imageRecName: plantInfo.scientific_name,
+                });
+            })
             .then((result) => {
                 res.redirect(`/plants/${result._id}`);
             })
@@ -123,7 +163,7 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
 router.get("/:plantId", (req, res, next) => {
     async function getPlantDetails() {
         const result = await Plant.findById({ _id: req.params.plantId });
-        console.log(result);
+        // console.log(result);
         res.render("plants/plant-details.hbs", result);
     }
     getPlantDetails();
