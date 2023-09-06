@@ -142,7 +142,7 @@ router.get("/list/:plantId", (req, res, next) => {
     }
 });
 
-router.post("/plants/:plantId", (req, res, next) => {
+router.post("/create/:plantId", (req, res, next) => {
     const plantId = req.params.plantId;
     console.log(plantId);
     axios
