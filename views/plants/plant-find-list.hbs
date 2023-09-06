@@ -1,11 +1,15 @@
-{{#each underResult}}
+<h1>Name: {{this.name}} </h1>
+	<img src="{{this.takenImage}}" alt="" class="small-preview">
+<br/>
+<hr/>
+
+<h2>The Similiar Plants</h2>
+{{#each plantData}}
 <section>
 	<h2>{{this.scientificName}}</h2>
-	<h2>{{this.organ}}</h2>
+	<h3>Matching Score: {{score}}</h3>
+	<h3>{{this.organ}}</h3>
 	<img src="{{this.images}}" alt="" class="small-preview">
-	<p>
-		<a href="/list/{{this.score}}">More details</a>
-	</p>
 
 </section>
 {{/each}}

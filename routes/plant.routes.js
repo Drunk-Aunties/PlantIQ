@@ -30,22 +30,35 @@ router.post(
                 `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=2b10pwICSS2Bx5QusceP0ioDHe`
             )
                 .then((result) => result.json())
-                .then((final) => final.results);
+                .then((final) => {
+                    return final;
+                });
         }
 
         function together() {
             getIdentification(req.file.path)
                 .then((plantType) => {
-                    const underResult = plantType.map((element) => {
-                        const images = element.images[0].url.m; // Assuming you want the first image URL
-                        const organ = element.organ;
+                    const recArr = plantType.results;
+                    const name = plantType.bestMatch;
+                    const organ = plantType.organ;
+                    const takenImage = plantType.query.images[0];
+
+                    const plantData = []; // Create an array to store the data
+
+                    recArr.forEach((element) => {
+                        const images = element.images[0].url.m;
                         const scientificName =
                             element.species.scientificNameWithoutAuthor;
                         const score = element.score;
-                        return { scientificName, organ, images, score };
+                        plantData.push({ scientificName, images, score }); // Add data to the array
                     });
 
-                    res.render("plants/plant-find-list.hbs", { underResult });
+                    res.render("plants/plant-find-list.hbs", {
+                        plantData, // Pass the array of data to the template
+                        organ,
+                        name,
+                        takenImage,
+                    });
                 })
                 .catch((error) => {
                     console.error(error);
