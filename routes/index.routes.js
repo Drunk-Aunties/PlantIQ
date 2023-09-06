@@ -92,6 +92,7 @@ router.get("/", (req, res) => {
     async function initiateLocal () {
         const plantsArray = await fetchPlantData(counter);
         plantsArrRef = plantsArray;
+        console.log("IM OVERWRITING THE LIST")
         res.render("index", {
             plants: plantsArrRef,
             counter: counter,
@@ -102,9 +103,10 @@ router.get("/", (req, res) => {
 
 router.get("/next", async (req, res) => {
     counter++;
-    const plantsArray = await fetchPlantData(counter);
+    plantsArrRef = await fetchPlantData(counter);
+    console.log(plantsArrRef);
     res.render("index", {
-        plants: plantsArray,
+        plants: plantsArrRef,
         counter: counter,
     });
 });
@@ -114,9 +116,9 @@ router.get("/prev", async (req, res) => {
     if (counter < 1) {
         counter = 1;
     }
-    const plantsArray = await fetchPlantData(counter);
+    plantsArrRef = await fetchPlantData(counter);
     res.render("index", {
-        plants: plantsArray,
+        plants: plantsArrRef,
         counter: counter,
     });
 });
@@ -131,6 +133,7 @@ router.get("/list/:plantId", (req, res, next) => {
     if (plantDetails) {
         res.render("plants/api-plant-details.hbs", plantDetails);
     } else {
+        console.log(plantsArrRef)
         res.status(404).send("Plant not found");
         async function ListApiPlants() {
             const plantsArray = await fetchPlantData();
@@ -144,12 +147,15 @@ router.get("/list/:plantId", (req, res, next) => {
                 res.status(404).send("Plant not found");
             }
         }
-        ListApiPlants();
+        //ListApiPlants();
     }
 });
 
+
 router.post("/create/:plantId", (req, res, next) => {
     const plantId = req.params.plantId;
+    let plantDetails
+
     console.log(plantId);
     axios
         .get(
@@ -160,10 +166,14 @@ router.post("/create/:plantId", (req, res, next) => {
             const selectedPlant = plantInfo.filter(
                 (element) => element.id == plantId
             );
-            const plantObject = selectedPlant[0];
+            let plantObject = selectedPlant[0];
+            console.log(plantObject);
+            plantObject = plantsArrRef.find(
+                (plant) => plant.id == plantId);
 
             if (!plantInfo) {
                 throw new Error("No plant data found.");
+                
             }
             return Plant.create({
                 registrationDate: req.body.registrationDate,
