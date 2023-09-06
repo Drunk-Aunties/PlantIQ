@@ -10,7 +10,8 @@
 
 </div>
 
-<div class="flex flex-wrap justify-center mt-10">
+   {{#if plants}}
+   <div class="flex flex-wrap justify-center mt-10">
 
    {{#each plants}}
 <!-- card 1 -->
@@ -35,3 +36,9 @@
 {{/each}}
 
 </div>
+{{else}}
+
+<p> Oops! it seems like you did not register any plants yet!</p>
+    {{/if}}
+
+

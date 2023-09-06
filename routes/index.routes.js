@@ -147,15 +147,17 @@ router.post("/list/create", (req, res, next) => {
         .then((plantsArray) => {
             console.log(plantsArray);
             const { common_name, image_url } = plantsArray[0];
+            let today = new Date();
+            today = today.toISOString().substr(0, 10);
 
             Plant.create({
                 name: common_name,
-                registrationDate: req.body.registrationDate,
+                registrationDate: today,
                 picture: image_url,
                 user: req.session.currentUser._id,
             })
                 .then((result) => {
-                    res.redirect(`/plants/list/${result._id}`);
+                    res.redirect(`/plants/${result._id}`);
                 })
                 .catch((error) => {
                     console.error("Error creating plant:", error.message);
