@@ -1,9 +1,20 @@
 <div class="flex justify-center flex-wrap items-center gap-20">
 
-    <div>
+    <div class="flex flex-col justify-center items-center">
         <img src="{{picture}}" alt="" class="max-w-md border shadow-lg">
-    </div>
 
+        <br>
+        <div class="border shadow-lg m-5 p-5 rounded">
+            <p class="text-center">
+            Print me!
+        </p>
+                    <p class="font-bold text-center">I am {{name}}.</p>
+           <img src="https://chart.googleapis.com/chart?cht=qr&chl=http://127.0.0.1:3000/plants/{{_id}}&chs=150x150"
+            alt="Plant QR Code">
+        </div>
+        
+
+    </div>
     <div class="" id="plant-info">
         {{#if name}}
         <h1 class="mb-4 text-4xl font-bold">My name is {{name}}!</h1>
@@ -12,7 +23,7 @@
         <h1 class="mb-4 text-2xl font-light">I am a {{imageRecName}}!</h1>
         {{/if}}
         {{#if commonNames}}
-        <h3 class="mb-4 text-2xl font-light">But Humans also like call me:</h3>
+        <h3 class="mb-4 text-2xl font-light">But humans also like call me:</h3>
         {{#each commonNames}}
         <h1 class="mb-4 text-3xl font-bold">{{this}}</h1>
         {{/each}}
@@ -20,9 +31,6 @@
 
 
         <br>
-        <br>
-        <br>
-
 
 
         <p class="mb-4 text-2xl font-light">Some more infomation about me:</p>
@@ -43,9 +51,7 @@
         <hr />
 
         <a href="/plants">Back</a>
-        <img src="https://chart.googleapis.com/chart?cht=qr&chl=http://127.0.0.1:3000/plants/{{_id}}&chs=150x150"
-            alt="Plant QR Code">
-
+     
 
     </div>
 
@@ -54,7 +60,12 @@
 
 
 </div>
-<div class=" flex flex-row-reverse justify-between">
+
+<br><br><br>
+<hr>
+<br>    
+
+<div class=" flex flex-row-reverse justify-between lg:mx-52">
     <a href="{{_id}}/delete"><button class="bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Delete
             plant</button></a>
     <a href="{{_id}}/chat"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Plant
@@ -64,13 +75,10 @@
 </div>
 <br>
 
-<div class="flex justify-end">
-
-</div>
 
 <br><br><br>
 
-<div class="flex flex-col justify-center mx-20">
+<div class="flex flex-wrap flex-col justify-center lg:mx-52 ">
 
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-12 h-12 text-2xl"
         onclick="showHistoryItemForm()">
