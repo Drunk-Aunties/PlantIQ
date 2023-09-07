@@ -126,6 +126,7 @@ router.get("/list/:plantId", (req, res, next) => {
     const plantDetails = plantsArrRef.find((plant) => plant.id == plantId);
 
     if (plantDetails) {
+        console.log(plantDetails)
         res.render("plants/api-plant-details.hbs", plantDetails);
     } else {
         res.status(404).send("Plant not found");

@@ -13,6 +13,14 @@ const OpenAI = require("openai");
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${day}-${month}-${year}`;
+}
 
 router.get("/:plantId/chat", async (req, res, next) => {
     try {
@@ -172,14 +180,6 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
                 const plantInfo = plantType.results[0];
                 // let today = new Date();
                 // today = today.toISOString().substr(0, 10);
-                function formatDate(date) {
-                    const year = date.getFullYear();
-                    const month = (date.getMonth() + 1)
-                        .toString()
-                        .padStart(2, "0");
-                    const day = date.getDate().toString().padStart(2, "0");
-                    return `${day}-${month}-${year}`;
-                }
                 return Plant.create({
                     name: req.body.name,
                     registrationDate: formatDate(new Date()),
@@ -249,7 +249,12 @@ router.post("/:plantId/edit", (req, res, next) => {
 // POST: edit plant
 router.post("/:plantId/addevent", (req, res, next) => {
     async function addHistoryItem() {
-        const result = PlantHistory.create(req.body);
+        const result = await PlantHistory.create({
+            category: req.body.category,
+            description: req.body.description,
+            date: formatDate(new Date()),
+            plant: req.params.plantId
+        });
         res.redirect(`/plants/${req.params.plantId}`);
     }
     addHistoryItem();

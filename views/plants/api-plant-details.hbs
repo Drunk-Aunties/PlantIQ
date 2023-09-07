@@ -1,21 +1,56 @@
-<h1>{{common_name}}</h1>
+<div class="flex justify-center flex-wrap items-center gap-20">
 
-<img src="https://chart.googleapis.com/chart?cht=qr&chl=http://127.0.0.1:3000/plants/{{id}}&chs=150x150" alt="">
+	<div>
+		<img src="{{image_url}}" alt="" class="max-w-md border shadow-lg">
+	</div>
 
-<form action="/create/{{id}}" method="post">
-	<button type="submit">Add it</button>
-</form>
 
-<hr />
-<h3>Registration date:</h3>
-<p>{{registrationDate}}</p>
 
-<h3>Description:</h3>
+	<div class="" id="plant-info">
+		{{#if common_name}}
+		<h1 class="mb-4 text-4xl font-bold">{{common_name}}</h1>
+		{{/if}}
+		{{#if scientific_name}}
+		<h1 class="mb-4 text-2xl font-light">{{scientific_name}}</h1>
+		{{/if}}
+		{{#if commonNames}}
+		<h3 class="mb-4 text-2xl font-light">But Humans also like call me:</h3>
+		{{#each commonNames}}
+		<h1 class="mb-4 text-3xl font-bold">{{this}}</h1>
+		{{/each}}
+		{{/if}}
 
-<p>{{synonyms}}</p>
 
-<h3>Picture:</h3>
-<img src="{{image_url}}" alt="">
-<hr />
+		<br>
 
-<a href="/">Back</a>
+
+
+		<p class="mb-4 text-2xl font-light">Some more infomation about me:</p>
+		{{#if family}}<h2 class="mb-4 text-2xl font-light">Family Name: {{family}}</h2>{{/if}}
+		{{#if species}}<h2 class="mb-4 text-xl font-light">Species: {{species}}</h2>{{/if}}
+		{{#if genus}}<h2 class="mb-4 text-xl font-light">Genus: {{genus}}</h2>{{/if}}
+
+
+			<form action="/create/{{id}}" method="post">
+		<button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full">Add to my Garden</button>
+	</form>
+
+		{{!-- <h3>Registration date:</h3>
+		<p>{{registrationDate}}</p> --}}
+
+
+		<p>{{description}}</p>
+
+
+
+
+
+
+
+	</div>
+
+
+
+
+
+</div>
