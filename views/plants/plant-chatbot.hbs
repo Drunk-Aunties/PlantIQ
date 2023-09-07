@@ -1,0 +1,38 @@
+<div id="chat-container" class="w-80 border border-gray-300 p-4 mx-auto bg-gray-100">
+	<div id="chat-messages" class="h-48 overflow-y-scroll border border-gray-300 p-2 mb-2"></div>
+	<input type="text" id="user-input" class="w-full px-2 py-1 border border-gray-300 rounded mr-2"
+		placeholder="Type your message...">
+	<button id="send-button" class="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">Send</button>
+</div>
+
+<script>
+	// Event listener for the chat button
+		const chatButton = document.getElementById('chatButton');
+		chatButton.addEventListener('click', async () => {
+			try {
+				// Make an asynchronous request to your server
+				const response = await fetch('/plants/chat', {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				});
+
+				if (response.ok) {
+					const responseData = await response.json();
+					const { response: chatResponse } = responseData;
+
+					// Debugging: Log the response to the console
+					console.log(chatResponse);
+
+					// Update the response container with the chat response
+					updateResponse(chatResponse);
+				} else {
+					console.error('Error fetching chat response.');
+				}
+			} catch (error) {
+				console.error('Error in chat request:', error);
+			}
+		});
+
+</script>
