@@ -18,12 +18,9 @@
         {{/each}}
         {{/if}}
 
-
         <br>
         <br>
         <br>
-
-
 
         <p class="mb-4 text-2xl font-light">Some more infomation about me:</p>
         {{#if familyName}}<h2 class="mb-4 text-2xl font-light">Family Name: {{familyName}}</h2>{{/if}}
@@ -34,11 +31,7 @@
         {{!-- <h3>Registration date:</h3>
         <p>{{registrationDate}}</p> --}}
 
-
         <p>{{description}}</p>
-
-
-
 
         <hr />
 
@@ -46,12 +39,7 @@
         <img src="https://chart.googleapis.com/chart?cht=qr&chl=http://127.0.0.1:3000/plants/{{_id}}&chs=150x150"
             alt="Plant QR Code">
 
-
     </div>
-
-
-
-
 
 </div>
 <div class=" flex flex-row-reverse justify-between">
@@ -65,11 +53,8 @@
 <br>
 
 <div class="flex justify-end">
-
 </div>
-
 <br><br><br>
-
 <div class="flex flex-col justify-center mx-20">
 
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-12 h-12 text-2xl"
@@ -111,22 +96,22 @@
     </form>
 
 
-<div class="flex flex-col-reverse">
+    <div class="flex flex-col-reverse">
         {{#each history}}
         <div class="flex justify-between items-center">
             <img src="/images/plant-bulb.png" alt="" class="inline h-10 m-3">
-    
-    <span class=" text-xl font-light">{{this.category}}: {{this.description}}</span>
-    <h1 class=" text-m font-light">{{this.date}}</h1>
+
+            <span class=" text-xl font-light">{{this.category}}: {{this.description}}</span>
+            <h1 class=" text-m font-light">{{this.date}}</h1>
 
         </div>
-        
-    
-    <hr>
-    {{/each}}
 
 
-</div>
+        <hr>
+        {{/each}}
+
+
+    </div>
 
 
 
@@ -141,12 +126,4 @@
         let form = document.getElementById("newHistoryItemForm");
         form.classList.toggle("hidden");
     }
-<<<<<<< HEAD
-    var myDate = document.getElementById('date');
-    var today = new Date();
-    myDate.value = today.toISOString().substr(0, 10);
-
-
-=======
->>>>>>> ea5c9f75a94033528a55e2d47aa4a1bec86e16b4
 </script>
