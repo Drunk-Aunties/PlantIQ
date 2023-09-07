@@ -10,9 +10,10 @@ require("./config")(app);
 app.use(
     cors({
         origin: [
-            "https://plantiq.adaptable.app/",
             "http://127.0.0.1:3000",
             "https://127.0.0.1:3000",
+            "http://localhost:8888",
+            "https://localhost:8888",
         ],
     })
 );
