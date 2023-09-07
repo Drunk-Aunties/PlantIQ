@@ -15,9 +15,7 @@ const openai = new OpenAI({
 });
 function formatDate(date) {
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1)
-        .toString()
-        .padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
     return `${day}-${month}-${year}`;
 }
@@ -29,14 +27,14 @@ router.get("/:plantId/chat", async (req, res, next) => {
 
         const userMessage = {
             role: "user",
-            content: `Hi, I will ask you a question, please answer like a beginner gardener. My plant has the following characteristics, ${JSON.stringify(
+            content: `Hi, I will ask you a question, please answer like a gardener. My plant has the following characteristics, ${JSON.stringify(
                 plantData
             )} Can you give an advice for me but you should explain it by using only 125 words.`,
         };
         const chatCompletion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [userMessage],
-            max_tokens: 100,
+            max_tokens: 250,
         });
         const response = chatCompletion.choices[0].message.content;
         console.log(response);
@@ -253,7 +251,7 @@ router.post("/:plantId/addevent", (req, res, next) => {
             category: req.body.category,
             description: req.body.description,
             date: formatDate(new Date()),
-            plant: req.params.plantId
+            plant: req.params.plantId,
         });
         res.redirect(`/plants/${req.params.plantId}`);
     }
