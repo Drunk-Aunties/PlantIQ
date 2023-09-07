@@ -6,7 +6,6 @@ const fileUploader = require("../config/cloudinary.config");
 const https = require("https");
 const router = express.Router();
 
-const imageApi = process.env.PLANT_NET_API;
 // GET: get all plants
 router.get("/", (req, res, next) => {
     async function getAllPlantsPerUser() {
