@@ -6,6 +6,21 @@ const fileUploader = require("../config/cloudinary.config");
 const https = require("https");
 const router = express.Router();
 const axios = require("axios");
+// const { Configuration, OpenAIApi } = require("openai");
+// const openaiConfig = require("../config/openai.config");
+
+// const openai = new OpenAIApi(openaiConfig);
+
+// router.get("/chat", (req, res, next) => {
+//     async function runCompletion() {
+//         const completion = await openai.createCompletion({
+//             model: "text-davinci-003",
+//             prompt: "How are you today?",
+//         });
+//         console.log(completion.data.choices[0].text);
+//     }
+//     runCompletion();
+// });
 
 // GET: get all plants
 router.get("/", (req, res, next) => {
@@ -138,11 +153,19 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
             })
             .then((plantsFromTrefle) => {
                 const plantInfo = plantType.results[0];
-                let today = new Date();
-                today = today.toISOString().substr(0, 10);
+                // let today = new Date();
+                // today = today.toISOString().substr(0, 10);
+                function formatDate(date) {
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1)
+                        .toString()
+                        .padStart(2, "0");
+                    const day = date.getDate().toString().padStart(2, "0");
+                    return `${day}-${month}-${year}`;
+                }
                 return Plant.create({
                     name: req.body.name,
-                    registrationDate: today,
+                    registrationDate: formatDate(new Date()),
                     picture: req.file.path,
                     user: req.session.currentUser._id,
                     species: plantInfo.species.scientificNameWithoutAuthor,

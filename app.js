@@ -3,7 +3,6 @@ require("./db");
 const express = require("express");
 const hbs = require("hbs");
 const isLoggedIn = require("./middleware/isLoggedIn");
-var cors = require("cors");
 
 const app = express();
 require("./config")(app);

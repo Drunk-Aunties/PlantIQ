@@ -13,7 +13,7 @@ const plantSchema = new Schema(
         genus: String,
         commonNames: [String],
         registrationDate: {
-            type: Date,
+            type: String,
         },
         picture: {
             type: String,
