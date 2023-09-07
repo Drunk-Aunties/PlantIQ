@@ -5,6 +5,7 @@ const isLoggedIn = require("../middleware/isLoggedIn");
 const fileUploader = require("../config/cloudinary.config");
 const https = require("https");
 const router = express.Router();
+const axios = require("axios");
 
 // GET: get all plants
 router.get("/", (req, res, next) => {
@@ -26,12 +27,17 @@ router.post(
     fileUploader.single("picture"),
     (req, res, next) => {
         function getIdentification(picture) {
-            return fetch(
-                `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=${process.env.PLANT_NET_API}`
-            )
-                .then((result) => result.json())
+            return axios
+                .get(
+                    `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=${process.env.PLANT_NET_API}`
+                )
+                .then((result) => result.data)
                 .then((final) => {
                     return final;
+                })
+                .catch((e) => {
+                    console.log("error fetching plant details.");
+                    console.log(e);
                 });
         }
 
@@ -80,10 +86,11 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
     let plantType = "";
 
     function getIdentification(picture) {
-        return fetch(
-            `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=${process.env.PLANT_NET_API}`
-        )
-            .then((result) => result.json())
+        return axios
+            .get(
+                `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=${process.env.PLANT_NET_API}`
+            )
+            .then((result) => result.data)
             .then((final) => {
                 plantType = final;
                 return final;
