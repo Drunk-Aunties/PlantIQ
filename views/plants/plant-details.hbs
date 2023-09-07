@@ -56,9 +56,9 @@
 <div class=" flex flex-row-reverse justify-between">
     <a href="{{_id}}/delete"><button class="bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Delete
             plant</button></a>
+    <a href="{{_id}}/chat"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Plant
+            Doctor</button></a>
     <a href="{{_id}}/edit"><button class="bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit
-            plant</button></a>
-                <a href="{{_id}}/"><button class="bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit
             plant</button></a>
 </div>
 <br>
@@ -83,7 +83,7 @@
             <label for="date">Registration date</label>
             <input type="date" name="date" id="date" />
         </div>
-                <div class="hidden">
+        <div class="hidden">
             <label for="plant">PlantID</label>
             <input type="text" name="plant" id="plant" value="{{_id}}" />
         </div>
@@ -128,7 +128,7 @@
     }
     var myDate = document.getElementById('date');
     var today = new Date();
-        myDate.value = today.toISOString().substr(0, 10);
+    myDate.value = today.toISOString().substr(0, 10);
 
 
 </script>

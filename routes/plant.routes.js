@@ -8,7 +8,6 @@ const router = express.Router();
 const axios = require("axios");
 const PlantHistory = require("../models/PlantHistory.model");
 
-
 const OpenAI = require("openai");
 
 const openai = new OpenAI({
@@ -22,18 +21,18 @@ router.get("/:plantId/chat", async (req, res, next) => {
 
         const userMessage = {
             role: "user",
-            content: `Hi, I am a ${genus} I have the following plant data:-- ${JSON.stringify(
+            content: `Hi, I will ask you a question, please answer like a beginner gardener. My plant has the following characteristics, ${JSON.stringify(
                 plantData
-            )} --. Can you tell me what is wrong with me?`,
+            )} Can you give an advice for me but you should explain it by using only 125 words.`,
         };
         const chatCompletion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [userMessage],
-            max_tokens: 30,
+            max_tokens: 100,
         });
         const response = chatCompletion.choices[0].message.content;
         console.log(response);
-        res.render("plants/plant-details.hbs", { response });
+        res.render("plants/plant-chatbot.hbs", { response });
     } catch (error) {
         console.error("Error in /chat route:", error);
         res.status(500).send("An error occurred.");
@@ -210,7 +209,7 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
 router.get("/:plantId", (req, res, next) => {
     async function getPlantDetails() {
         const result = await Plant.findById({ _id: req.params.plantId });
-        const history = await PlantHistory.find({plant: req.params.plantId});
+        const history = await PlantHistory.find({ plant: req.params.plantId });
         result.history = history;
         res.render("plants/plant-details.hbs", result);
     }
@@ -226,25 +225,26 @@ router.get("/:plantId/delete", (req, res, next) => {
     deletePlant();
 });
 
-
 // GET: edit plant
 router.get("/:plantId/edit", (req, res, next) => {
     async function getPlantDetailsEdit() {
         const result = await Plant.findById(req.params.plantId);
         res.render("plants/plant-edit.hbs", result);
     }
-    getPlantDetailsEdit();}
-)
+    getPlantDetailsEdit();
+});
 
 // POST: edit plant
 router.post("/:plantId/edit", (req, res, next) => {
     async function editPlantDetails() {
-        const result = await Plant.findByIdAndUpdate(req.params.plantId, req.body);
+        const result = await Plant.findByIdAndUpdate(
+            req.params.plantId,
+            req.body
+        );
         res.redirect(`/plants/${req.params.plantId}`);
     }
-    editPlantDetails()}
-)
-
+    editPlantDetails();
+});
 
 // POST: edit plant
 router.post("/:plantId/addevent", (req, res, next) => {
@@ -252,8 +252,6 @@ router.post("/:plantId/addevent", (req, res, next) => {
         const result = PlantHistory.create(req.body);
         res.redirect(`/plants/${req.params.plantId}`);
     }
-    addHistoryItem()}
-)
+    addHistoryItem();
+});
 module.exports = router;
-
-
