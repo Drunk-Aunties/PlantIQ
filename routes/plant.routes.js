@@ -6,9 +6,7 @@ const fileUploader = require("../config/cloudinary.config");
 const https = require("https");
 const router = express.Router();
 
-const apiKey = "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";
-const message = "Hello, ChatGPT!";
-
+const imageApi = process.env.PLANT_NET_API;
 // GET: get all plants
 router.get("/", (req, res, next) => {
     async function getAllPlantsPerUser() {
@@ -30,7 +28,7 @@ router.post(
     (req, res, next) => {
         function getIdentification(picture) {
             return fetch(
-                `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=2b10pwICSS2Bx5QusceP0ioDHe`
+                `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=${process.env.PLANT_NET_API}`
             )
                 .then((result) => result.json())
                 .then((final) => {
@@ -84,7 +82,7 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
 
     function getIdentification(picture) {
         return fetch(
-            `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=2b10pwICSS2Bx5QusceP0ioDHe`
+            `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=${process.env.PLANT_NET_API}`
         )
             .then((result) => result.json())
             .then((final) => {
