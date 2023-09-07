@@ -29,9 +29,7 @@
         {{/each}}
         {{/if}}
 
-
         <br>
-
 
         <p class="mb-4 text-2xl font-light">Some more infomation about me:</p>
         {{#if familyName}}<h2 class="mb-4 text-2xl font-light">Family Name: {{familyName}}</h2>{{/if}}
@@ -42,11 +40,7 @@
         {{!-- <h3>Registration date:</h3>
         <p>{{registrationDate}}</p> --}}
 
-
         <p>{{description}}</p>
-
-
-
 
         <hr />
 
@@ -54,10 +48,6 @@
      
 
     </div>
-
-
-
-
 
 </div>
 
@@ -119,22 +109,22 @@
     </form>
 
 
-<div class="flex flex-col-reverse">
+    <div class="flex flex-col-reverse">
         {{#each history}}
         <div class="flex justify-between items-center">
             <img src="/images/plant-bulb.png" alt="" class="inline h-10 m-3">
-    
-    <span class=" text-xl font-light">{{this.category}}: {{this.description}}</span>
-    <h1 class=" text-m font-light">{{this.date}}</h1>
+
+            <span class=" text-xl font-light">{{this.category}}: {{this.description}}</span>
+            <h1 class=" text-m font-light">{{this.date}}</h1>
 
         </div>
-        
-    
-    <hr>
-    {{/each}}
 
 
-</div>
+        <hr>
+        {{/each}}
+
+
+    </div>
 
 
 
