@@ -160,6 +160,7 @@ router.post("/create/:plantId", (req, res, next) => {
             );
             let plantObject = selectedPlant[0];
             plantObject = plantsArrRef.find((plant) => plant.id == plantId);
+            console.log(plantObject);
 
             if (!plantInfo) {
                 throw new Error("No plant data found.");
@@ -170,6 +171,9 @@ router.post("/create/:plantId", (req, res, next) => {
                 user: req.session.currentUser._id,
                 name: plantObject.common_name,
                 imageRecName: plantObject.scientific_name,
+                genus: plantObject.genus,
+                familyName:plantObject.family,
+                commonNames: plantObject.commonNames,
             });
         })
         .then((result) => {
