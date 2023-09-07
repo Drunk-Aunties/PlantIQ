@@ -6,6 +6,9 @@ const fileUploader = require("../config/cloudinary.config");
 const https = require("https");
 const router = express.Router();
 const axios = require("axios");
+const PlantHistory = require("../models/PlantHistory.model");
+
+
 // const { Configuration, OpenAIApi } = require("openai");
 // const openaiConfig = require("../config/openai.config");
 
@@ -192,6 +195,8 @@ router.post("/create", fileUploader.single("picture"), (req, res, next) => {
 router.get("/:plantId", (req, res, next) => {
     async function getPlantDetails() {
         const result = await Plant.findById({ _id: req.params.plantId });
+        const history = await PlantHistory.find({plant: req.params.plantId});
+        result.history = history;
         res.render("plants/plant-details.hbs", result);
     }
     getPlantDetails();
@@ -223,6 +228,16 @@ router.post("/:plantId/edit", (req, res, next) => {
         res.redirect(`/plants/${req.params.plantId}`);
     }
     editPlantDetails()}
+)
+
+
+// POST: edit plant
+router.post("/:plantId/addevent", (req, res, next) => {
+    async function addHistoryItem() {
+        const result = PlantHistory.create(req.body);
+        res.redirect(`/plants/${req.params.plantId}`);
+    }
+    addHistoryItem()}
 )
 module.exports = router;
 
