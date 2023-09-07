@@ -32,6 +32,10 @@ router.post(
                 .then((result) => result.json())
                 .then((final) => {
                     return final;
+                })
+                .catch((e) => {
+                    console.log("error fetching plant details.");
+                    console.log(e);
                 });
         }
 
