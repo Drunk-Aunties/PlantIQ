@@ -3,19 +3,22 @@ require("./db");
 const express = require("express");
 const hbs = require("hbs");
 const isLoggedIn = require("./middleware/isLoggedIn");
+var cors = require("cors");
 
 const app = express();
-
 require("./config")(app);
+app.use(cors());
 
 const capitalize = require("./utils/capitalize");
 const projectName = "plant-iq";
 
 app.locals.appTitle = `${capitalize(projectName)} created with IronLauncher`;
-
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+    );
 
     if (req.session.currentUser) {
         res.locals.currentUser = req.session.currentUser;
