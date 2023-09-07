@@ -22,7 +22,7 @@ const plantSchema = new Schema(
             {
                 category: String,
                 description: String,
-                date: Date,
+                date: String,
             },
         ],
         user: {

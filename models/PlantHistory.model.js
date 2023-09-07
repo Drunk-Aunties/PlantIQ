@@ -4,7 +4,7 @@ const plantHistorySchema = new Schema(
     {
                 category: String,
                 description: String,
-                date: Date,
+                date: String,
                 plant: {
                     type: Schema.Types.ObjectId,
                     ref: "Plant",

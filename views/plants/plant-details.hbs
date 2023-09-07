@@ -18,6 +18,7 @@
         {{/each}}
         {{/if}}
 
+
         <br>
         <br>
         <br>
@@ -110,13 +111,27 @@
     </form>
 
 
+<div class="flex flex-col-reverse">
+        {{#each history}}
+        <div class="flex justify-between items-center">
+            <img src="/images/plant-bulb.png" alt="" class="inline h-10 m-3">
+    
+    <span class=" text-xl font-light">{{this.category}}: {{this.description}}</span>
+    <h1 class=" text-m font-light">{{this.date}}</h1>
 
-
-    {{#each history}}
-    <input type="date" value="{{this.date}}">
-    <h1 class="mb-4 text-m font-light">{{this.date}} - {{this.category}}{{this.description}}</h1>
+        </div>
+        
+    
     <hr>
     {{/each}}
+
+
+</div>
+
+
+
+
+
 </div>
 
 <br><br>
@@ -126,9 +141,4 @@
         let form = document.getElementById("newHistoryItemForm");
         form.classList.toggle("hidden");
     }
-    var myDate = document.getElementById('date');
-    var today = new Date();
-        myDate.value = today.toISOString().substr(0, 10);
-
-
 </script>
