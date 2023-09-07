@@ -14,6 +14,9 @@ const projectName = "plant-iq";
 app.locals.appTitle = `${capitalize(projectName)} created with IronLauncher`;
 
 app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+
     if (req.session.currentUser) {
         res.locals.currentUser = req.session.currentUser;
     }
