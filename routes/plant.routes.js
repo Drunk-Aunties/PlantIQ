@@ -212,13 +212,33 @@ router.get("/:plantId", (req, res, next) => {
     getPlantDetails();
 });
 
-// POST: delete plant
+// GET: delete plant
 router.get("/:plantId/delete", (req, res, next) => {
     async function deletePlant() {
         const result = await Plant.findByIdAndDelete(req.params.plantId);
-        res.send("This is the plant deleted" + result);
+        res.redirect("/plants");
     }
     deletePlant();
 });
 
+
+// GET: edit plant
+router.get("/:plantId/edit", (req, res, next) => {
+    async function getPlantDetailsEdit() {
+        const result = await Plant.findById(req.params.plantId);
+        res.render("plants/plant-edit.hbs", result);
+    }
+    getPlantDetailsEdit();}
+)
+
+// POST: edit plant
+router.post("/:plantId/edit", (req, res, next) => {
+    async function editPlantDetails() {
+        const result = await Plant.findByIdAndUpdate(req.params.plantId, req.body);
+        res.redirect(`/plants/${req.params.plantId}`);
+    }
+    editPlantDetails()}
+)
 module.exports = router;
+
+
