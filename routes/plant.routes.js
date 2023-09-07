@@ -6,21 +6,36 @@ const fileUploader = require("../config/cloudinary.config");
 const https = require("https");
 const router = express.Router();
 const axios = require("axios");
-// const { Configuration, OpenAIApi } = require("openai");
-// const openaiConfig = require("../config/openai.config");
+const OpenAI = require("openai");
 
-// const openai = new OpenAIApi(openaiConfig);
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
 
-// router.get("/chat", (req, res, next) => {
-//     async function runCompletion() {
-//         const completion = await openai.createCompletion({
-//             model: "text-davinci-003",
-//             prompt: "How are you today?",
-//         });
-//         console.log(completion.data.choices[0].text);
-//     }
-//     runCompletion();
-// });
+router.get("/:plantId/chat", async (req, res, next) => {
+    try {
+        const plantData = await Plant.findById({ _id: req.params.plantId });
+        const genus = plantData.genus;
+
+        const userMessage = {
+            role: "user",
+            content: `Hi, I am a ${genus} I have the following plant data:-- ${JSON.stringify(
+                plantData
+            )} --. Can you tell me what is wrong with me?`,
+        };
+        const chatCompletion = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [userMessage],
+            max_tokens: 30,
+        });
+        const response = chatCompletion.choices[0].message.content;
+        console.log(response);
+        res.render("plants/plant-details.hbs", { response });
+    } catch (error) {
+        console.error("Error in /chat route:", error);
+        res.status(500).send("An error occurred.");
+    }
+});
 
 // GET: get all plants
 router.get("/", (req, res, next) => {
