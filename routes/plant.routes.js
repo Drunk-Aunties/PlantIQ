@@ -23,13 +23,18 @@ function formatDate(date) {
 router.get("/:plantId/chat", async (req, res, next) => {
     try {
         const plantData = await Plant.findById({ _id: req.params.plantId });
+        const PlantInfo = await PlantHistory.findById({
+            _id: req.params.plantId,
+        });
         const genus = plantData.genus;
 
         const userMessage = {
             role: "user",
             content: `Hi, I will ask you a question, please answer like a gardener. My plant has the following characteristics, ${JSON.stringify(
                 plantData
-            )} Can you give an advice for me but you should explain it by using only 125 words.`,
+            )}, and following extra information ${JSON.stringify(
+                PlantInfo
+            )} Can you give information about my plant and an advice for me but you should explain it by using only 100 words.`,
         };
         const chatCompletion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
