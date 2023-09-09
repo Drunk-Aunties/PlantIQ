@@ -25,5 +25,4 @@ function showSearch() {
 function showHistoryItemForm() {
   let form = document.getElementById("newHistoryItemForm");
   form.classList.toggle("hidden");
-
-
+}

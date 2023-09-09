@@ -75,3 +75,25 @@
         plant...</h1>
     <img src="/images/connecting.gif" alt="" class="h-full w-auto">
 </div>
+
+<script>
+    //Create screen interactive form 
+function showForm() {
+  let form = document.getElementById("form-AI");
+  form.classList.toggle("hidden");
+  let blabla = document.getElementById("method-select");
+  blabla.classList.toggle("hidden");
+}
+function waitingScreen() {
+  let form = document.getElementById("form-AI");
+  form.classList.toggle("hidden");
+  let blabla = document.getElementById("waiting-screen");
+  blabla.classList.toggle("hidden");
+}
+function showSearch() {
+  let form = document.getElementById("form-manual-search");
+  form.classList.toggle("hidden");
+  let blabla = document.getElementById("method-select");
+  blabla.classList.toggle("hidden");
+}
+</script>
