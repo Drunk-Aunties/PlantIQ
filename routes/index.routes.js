@@ -1,39 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const https = require("https");
 const Plant = require("../models/Plant.model");
-const axios = require("axios");
+const { trefleGetPlantList, trefleGetPlantListByQuery } = require("../utils/apiTrefleIo");
 
+//Variables essential for local storage of plants and paination display
 let counter = 1;
 let plantsArrRef = [];
-
-async function fetchPlantData(page) {
-    return new Promise((resolve, reject) => {
-        https.get(
-            `https://trefle.io/api/v1/plants?token=${process.env.MY_PLANT_KEY}&page=${page}`,
-            (resp) => {
-                let data = "";
-
-                resp.on("data", (chunk) => {
-                    data += chunk;
-                });
-
-                resp.on("end", () => {
-                    try {
-                        const jsonData = JSON.parse(data);
-                        resolve(jsonData.data);
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-
-                resp.on("error", (error) => {
-                    reject(error);
-                });
-            }
-        );
-    });
-}
 
 router.use(async (req, res, next) => {
     try {
@@ -44,145 +16,74 @@ router.use(async (req, res, next) => {
     }
 });
 
+//SEARCH: Gets query results from Trefleio API and displays them
 router.get("/search", async (req, res) => {
     const query = req.query.query.toLowerCase();
-
-    async function fetchPlantDataByQuery(query) {
-        return new Promise((resolve, reject) => {
-            https.get(
-                `https://trefle.io/api/v1/plants/search?token=${process.env.MY_PLANT_KEY}&q=${query}`,
-                (resp) => {
-                    let data = "";
-
-                    resp.on("data", (chunk) => {
-                        data += chunk;
-                    });
-
-                    resp.on("end", () => {
-                        try {
-                            const jsonData = JSON.parse(data);
-                            resolve(jsonData.data);
-                        } catch (error) {
-                            reject(error);
-                        }
-                    });
-
-                    resp.on("error", (error) => {
-                        reject(error);
-                    });
-                }
-            );
-        });
-    }
-
     try {
-        const plantsArray = await fetchPlantDataByQuery(query);
-        plantsArrRef = plantsArray;
-        res.render("index", {
-            plants: plantsArray,
-            counter: counter,
-        });
-    } catch (error) {
+        let plantsArrRef = await trefleGetPlantListByQuery(query);
+        res.render("index", { plants: plantsArrRef, counter: counter });
+    }
+    catch (error) {
         console.error("Error fetching plant data by query: " + error.message);
         next(error);
     }
 });
 
-router.get("/", (req, res) => {
-    async function initiateLocal() {
-        const plantsArray = await fetchPlantData(counter);
-        plantsArrRef = plantsArray;
-        res.render("index", {
-            plants: plantsArrRef,
-            counter: counter,
-        });
-    }
-    initiateLocal();
+//GET INDEX: Get initial plant list from Trefle.Io
+router.get("/", async (req, res) => {
+    plantsArrRef = await trefleGetPlantList(counter);
+    res.render("index", { plants: plantsArrRef, counter: counter, });
 });
 
+//GET INDEX NEXT: Refreshes plant list pagination 
 router.get("/next", async (req, res) => {
     counter++;
-    plantsArrRef = await fetchPlantData(counter);
-    res.render("index", {
-        plants: plantsArrRef,
-        counter: counter,
-    });
+    plantsArrRef = await trefleGetPlantList(counter);
+    res.render("index", { plants: plantsArrRef, counter: counter });
 });
 
+//GET INDEX PREVIOUS: Refreshes plant list pagination 
 router.get("/prev", async (req, res) => {
     counter--;
-    if (counter < 1) {
-        counter = 1;
-    }
-    plantsArrRef = await fetchPlantData(counter);
-    res.render("index", {
-        plants: plantsArrRef,
-        counter: counter,
-    });
+    if (counter < 1) { counter = 1 }
+    plantsArrRef = await trefleGetPlantList(counter);
+    res.render("index", { plants: plantsArrRef, counter: counter });
 });
 
+//GET: Displays plants details fetched from locally stored plant list
 router.get("/list/:plantId", (req, res, next) => {
-    const plantId = req.params.plantId;
-    const plantDetails = plantsArrRef.find((plant) => plant.id == plantId);
-
+    const plantDetails = plantsArrRef.find((plant) => plant.id == req.params.plantId);
     if (plantDetails) {
-        console.log(plantDetails)
         res.render("plants/api-plant-details.hbs", plantDetails);
     } else {
         res.status(404).send("Plant not found");
-        async function ListApiPlants() {
-            const plantsArray = await fetchPlantData();
-            const plantDetails = plantsArray.find(
-                (plant) => plant.id == plantId
-            );
-
-            if (plantDetails) {
-                res.render("plants/api-plant-details.hbs", plantDetails);
-            } else {
-                res.status(404).send("Plant not found");
-            }
-        }
     }
 });
 
-router.post("/create/:plantId", (req, res, next) => {
-    const plantId = req.params.plantId;
-    let plantDetails;
+//POST: Add Plant from Trefle.io to my Garden
+router.post("/create/:plantId", async (req, res, next) => {
+    try {
+        //Gets plant data in locally stored array
+        plantObject = plantsArrRef.find((plant) => plant.id == req.params.plantId);
+        if (!plantObject) { throw new Error("No plant data found.") };
 
-    axios
-        .get(
-            `https://trefle.io/api/v1/plants?token=${process.env.MY_PLANT_KEY}&filter[id]=${plantId}`
-        )
-        .then((response) => {
-            const plantInfo = response.data.data;
-            const selectedPlant = plantInfo.filter(
-                (element) => element.id == plantId
-            );
-            let plantObject = selectedPlant[0];
-            plantObject = plantsArrRef.find((plant) => plant.id == plantId);
-            console.log(plantObject);
-
-            if (!plantInfo) {
-                throw new Error("No plant data found.");
-            }
-            return Plant.create({
-                registrationDate: req.body.registrationDate,
-                picture: plantObject.image_url,
-                user: req.session.currentUser._id,
-                name: plantObject.common_name,
-                imageRecName: plantObject.scientific_name,
-                genus: plantObject.genus,
-                familyName:plantObject.family,
-                commonNames: plantObject.commonNames,
-            });
-        })
-        .then((result) => {
-            res.redirect(`/plants/${result._id}`);
-        })
-        .catch((error) => {
-            console.error("Error creating plant:", error.message);
-            next(error);
+        //Creates Plant in MongoDB
+        let result = await Plant.create({
+            registrationDate: req.body.registrationDate,
+            picture: plantObject.image_url,
+            user: req.session.currentUser._id,
+            name: plantObject.common_name,
+            imageRecName: plantObject.scientific_name,
+            genus: plantObject.genus,
+            familyName: plantObject.family,
+            commonNames: plantObject.commonNames,
         });
-});
+        res.redirect(`/plants/${result._id}`);
+    }
+    catch (error) {
+        console.error("Error creating plant:", error.message);
+        next(error);
+    }
+})
 
 module.exports = router;

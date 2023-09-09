@@ -1,13 +1,13 @@
-<div class="flex justify-center flex-wrap items-center gap-20">
+<div class="flex justify-center flex-wrap items-center gap-20 mt-7">
     <div class="flex flex-col justify-center items-center">
-        <img src="{{picture}}" alt="" class="max-w-md border shadow-lg">
+        <img src="{{picture}}" alt="Plant picture" class="max-w-md border shadow-lg">
         <br>
         <div class="border shadow-lg m-5 p-5 rounded">
             <p class="text-center">
                 Print me!
             </p>
             <p class="font-bold text-center">I am {{name}}.</p>
-            <img src="https://chart.googleapis.com/chart?cht=qr&chl=http://127.0.0.1:3000/plants/{{_id}}&chs=150x150"
+            <img src="https://chart.googleapis.com/chart?cht=qr&chl=https://plantiq.adaptable.app/plants/{{_id}}&chs=150x150"
                 alt="Plant QR Code">
         </div>
     </div>
@@ -38,7 +38,7 @@
 <br><br><br>
 <hr>
 <br>
-<div class=" flex flex-row-reverse justify-between lg:mx-52">
+<div class=" flex flex-row-reverse justify-between lg:mx-64">
     <a href="{{_id}}/delete"><button class="bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Delete
             plant</button></a>
     <a href="{{_id}}/chat"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Plant
@@ -48,26 +48,24 @@
 </div>
 <br>
 <br><br><br>
-<div class="flex flex-wrap flex-col justify-center lg:mx-52 ">
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-12 h-12 text-2xl"
+<div class="flex flex-wrap flex-col justify-center lg:mx-64 ">
+    <button class=" text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-12 h-12 text-2xl"
         onclick="showHistoryItemForm()">
         +
     </button>
     <br><br>
     <form id="newHistoryItemForm" class="hidden" action="/plants/{{_id}}/addevent" method="post">
         <div class="hidden">
-            <label for="date">Registration date</label>
             <input type="date" name="date" id="date" />
         </div>
         <div class="hidden">
-            <label for="plant">PlantID</label>
             <input type="text" name="plant" id="plant" value="{{_id}}" />
         </div>
         <div class="relative z-0 w-full mb-6 group">
             <input type="text" name="category" id="category"
                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" " value="Observation" />
-            <label for="floating_email"
+            <label for="description"
                 class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Category</label>
         </div>
         <div class="relative z-0 w-full mb-6 group">
@@ -84,7 +82,7 @@
     <div class="flex flex-col-reverse">
         {{#each history}}
         <div class="flex justify-between items-center">
-            <img src="/images/plant-bulb.png" alt="" class="inline h-10 m-3">
+            <img src="/images/plant-bulb.png" alt="" class="inline h-8 m-3">
             <span class=" text-xl font-light">{{this.category}}: {{this.description}}</span>
             <h1 class=" text-m font-light">{{this.date}}</h1>
         </div>
@@ -93,10 +91,3 @@
     </div>
 </div>
 <br><br>
-
-<script>
-    function showHistoryItemForm() {
-        let form = document.getElementById("newHistoryItemForm");
-        form.classList.toggle("hidden");
-    }
-</script>

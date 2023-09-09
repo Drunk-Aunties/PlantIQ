@@ -7,10 +7,9 @@ const isLoggedIn = require("./middleware/isLoggedIn");
 const app = express();
 require("./config")(app);
 
-const capitalize = require("./utils/capitalize");
-const projectName = "plant-iq";
+const projectName = "Plant-IQ";
 
-app.locals.appTitle = `${capitalize(projectName)} created with IronLauncher`;
+app.locals.appTitle = `${projectName}`;
 app.use((req, res, next) => {
     if (req.session.currentUser) {
         res.locals.currentUser = req.session.currentUser;

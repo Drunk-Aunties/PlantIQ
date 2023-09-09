@@ -1,40 +1,30 @@
 const express = require("express");
+
 const Plant = require("../models/Plant.model");
-const User = require("../models/User.model");
-const isLoggedIn = require("../middleware/isLoggedIn");
-const fileUploader = require("../config/cloudinary.config");
-const https = require("https");
-const router = express.Router();
-const axios = require("axios");
 const PlantHistory = require("../models/PlantHistory.model");
 
+const fileUploader = require("../config/cloudinary.config");
+const router = express.Router();
+
 const OpenAI = require("openai");
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-function formatDate(date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    return `${day}-${month}-${year}`;
-}
 
+const { formatDate } = require("../utils/generalFunctions");
+
+const { getIdentification } = require("../utils/apiPlantNet");
+
+//GET: Send all plant data to Chat GPT and gets response
 router.get("/:plantId/chat", async (req, res, next) => {
     try {
         const plantData = await Plant.findById({ _id: req.params.plantId });
-        const PlantInfo = await PlantHistory.findById({
-            _id: req.params.plantId,
-        });
-        const genus = plantData.genus;
-
+        const PlantInfo = await PlantHistory.findById({ _id: req.params.plantId });
         const userMessage = {
             role: "user",
-            content: `Hi, I will ask you a question, please answer like a gardener. My plant has the following characteristics, ${JSON.stringify(
-                plantData
-            )}, and following extra information ${JSON.stringify(
-                PlantInfo
-            )} Can you give information about my plant and an advice for me but you should explain it by using only 100 words.`,
+            content: `Hi, I will ask you a question, please answer like a gardener. 
+            My plant has the following characteristics, ${JSON.stringify(plantData)}, 
+            and following extra information ${JSON.stringify(PlantInfo)} 
+            Can you give information about my plant and an advice for me but you should explain it by using only 100 words.`,
         };
         const chatCompletion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
@@ -42,7 +32,6 @@ router.get("/:plantId/chat", async (req, res, next) => {
             max_tokens: 250,
         });
         const response = chatCompletion.choices[0].message.content;
-        console.log(response);
         res.render("plants/plant-chatbot.hbs", { response });
     } catch (error) {
         console.error("Error in /chat route:", error);
@@ -50,216 +39,111 @@ router.get("/:plantId/chat", async (req, res, next) => {
     }
 });
 
-// GET: get all plants
-router.get("/", (req, res, next) => {
-    async function getAllPlantsPerUser() {
-        const result = await Plant.find({ user: req.session.currentUser._id });
-        res.render("plants/plants-list.hbs", { plants: result });
-    }
-    getAllPlantsPerUser();
+// GET: populates My Garden section with all plants for current user
+router.get("/", async (req, res, next) => {
+    const result = await Plant.find({ user: req.session.currentUser._id });
+    res.render("plants/plants-list.hbs", { plants: result });
 });
 
-// GET: get plant create form
+// GET: Know Your Plant AI image recognition Form page
 router.get("/knowyourplant", (req, res, next) => {
     res.render("plants/plant-find.hbs");
 });
 
-// POST: create new plant in DB
-router.post(
-    "/knowyourplant",
-    fileUploader.single("picture"),
-    (req, res, next) => {
-        function getIdentification(picture) {
-            return axios
-                .get(
-                    `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=${process.env.PLANT_NET_API}`
-                )
-                .then((result) => result.data)
-                .then((final) => {
-                    return final;
-                })
-                .catch((e) => {
-                    console.log("error fetching plant details.");
-                    console.log(e);
-                });
-        }
+// POST: Know Your Plant AI image recognition Result page
+router.post("/knowyourplant", fileUploader.single("picture"), async (req, res, next) => {
+    try {
+        let result = await getIdentification(req.file.path);
+        console.log(result)
+        //extracts fields from API's response
+        const name = result.bestMatch;
+        const organ = result.organ;
+        const takenImage = result.query.images[0];
+        const recArr = result.results
 
-        function together() {
-            getIdentification(req.file.path)
-                .then((plantType) => {
-                    const recArr = plantType.results;
-                    const name = plantType.bestMatch;
-                    const organ = plantType.organ;
-                    const takenImage = plantType.query.images[0];
+        //Creates array of similar plants
+        const similarPlants = [];
+        recArr.forEach((element) => {
+            const images = element.images[0].url.m;
+            const scientificName = element.species.scientificNameWithoutAuthor;
+            const score = element.score;
+            similarPlants.push({ scientificName, images, score });
+        });
 
-                    const plantData = [];
-
-                    recArr.forEach((element) => {
-                        const images = element.images[0].url.m;
-                        const scientificName =
-                            element.species.scientificNameWithoutAuthor;
-                        const score = element.score;
-                        plantData.push({ scientificName, images, score });
-                    });
-
-                    res.render("plants/plant-find-list.hbs", {
-                        plantData,
-                        organ,
-                        name,
-                        takenImage,
-                    });
-                })
-                .catch((error) => {
-                    console.error(error);
-                    res.status(500).send("An error occurred.");
-                });
-        }
-        together();
+        //Renders view with all info
+        res.render("plants/plant-find-list.hbs", { similarPlants, organ, name, takenImage })
     }
-);
+    catch (error) { res.status(500).send("An error occurred.") }
+});
 
 // GET: get plant create form
 router.get("/create", (req, res, next) => {
-    console.log("in the create route...");
     res.render("plants/plant-create.hbs");
 });
 
-// POST: create new plant in DB
-router.post("/create", fileUploader.single("picture"), (req, res, next) => {
-    let plantType = "";
+// POST: create new plant based on picture recognition
+router.post("/create", fileUploader.single("picture"), async (req, res, next) => {
+    try {
+        //Get results from API Image Recognition
+        let result = await getIdentification(req.file.path);
+        //Isolates nested best match object
+        let plant = result.results[0];
 
-    function getIdentification(picture) {
-        return axios
-            .get(
-                `https://my-api.plantnet.org/v2/identify/all?images=${picture}&include-related-images=true&no-reject=false&lang=en&api-key=${process.env.PLANT_NET_API}`
-            )
-            .then((result) => result.data)
-            .then((final) => {
-                plantType = final;
-                return final;
-            });
+        //Creates plant in Mongo DB
+        let createdPlant = await Plant.create({
+            name: req.body.name,
+            registrationDate: formatDate(new Date()),
+            picture: req.file.path,
+            user: req.session.currentUser._id,
+            species: plant.species.scientificNameWithoutAuthor,
+            genus: plant.species.genus.scientificNameWithoutAuthor,
+            familyName: plant.species.family.scientificNameWithoutAuthor,
+            commonNames: plant.species.commonNames,
+            imageRecName: result.bestMatch,
+        });
+        res.redirect(`/plants/${createdPlant._id}`);
     }
-
-    function together() {
-        getIdentification(req.file.path)
-            .then((identifiedArray) => {
-                const recArr = identifiedArray.results;
-                const plantNames = [];
-                recArr.forEach((element) => {
-                    const scientificName =
-                        element.species.scientificNameWithoutAuthor;
-                    plantNames.push(scientificName);
-                });
-
-                const query = plantNames.toString();
-
-                return new Promise((resolve, reject) => {
-                    https.get(
-                        `https://trefle.io/api/v1/plants?token=${process.env.MY_PLANT_KEY}&filter[scientific_name]=${query}`,
-                        (resp) => {
-                            let data = "";
-
-                            resp.on("data", (chunk) => {
-                                data += chunk;
-                            });
-
-                            resp.on("end", () => {
-                                try {
-                                    const jsonData = JSON.parse(data);
-                                    resolve(jsonData.data);
-                                } catch (error) {
-                                    reject(error);
-                                }
-                            });
-
-                            resp.on("error", (error) => {
-                                reject(error);
-                            });
-                        }
-                    );
-                });
-            })
-            .then((plantsFromTrefle) => {
-                const plantInfo = plantType.results[0];
-                // let today = new Date();
-                // today = today.toISOString().substr(0, 10);
-                return Plant.create({
-                    name: req.body.name,
-                    registrationDate: formatDate(new Date()),
-                    picture: req.file.path,
-                    user: req.session.currentUser._id,
-                    species: plantInfo.species.scientificNameWithoutAuthor,
-                    genus: plantInfo.species.genus.scientificNameWithoutAuthor,
-                    familyName:
-                        plantInfo.species.family.scientificNameWithoutAuthor,
-                    commonNames: plantInfo.species.commonNames,
-                    imageRecName: plantType.bestMatch,
-                });
-            })
-            .then((result) => {
-                res.redirect(`/plants/${result._id}`);
-            })
-            .catch((error) => {
-                console.error(error);
-                res.status(500).send("An error occurred.");
-            });
+    catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred.");
     }
-
-    together();
 });
 
 // GET: get single plant details
-router.get("/:plantId", (req, res, next) => {
-    async function getPlantDetails() {
-        const result = await Plant.findById({ _id: req.params.plantId });
-        const history = await PlantHistory.find({ plant: req.params.plantId });
-        result.history = history;
-        res.render("plants/plant-details.hbs", result);
-    }
-    getPlantDetails();
+router.get("/:plantId", async (req, res, next) => {
+    const result = await Plant.findById({ _id: req.params.plantId });
+    const history = await PlantHistory.find({ plant: req.params.plantId });
+    result.history = history;
+    res.render("plants/plant-details.hbs", result);
 });
 
 // GET: delete plant
-router.get("/:plantId/delete", (req, res, next) => {
-    async function deletePlant() {
-        const result = await Plant.findByIdAndDelete(req.params.plantId);
-        res.redirect("/plants");
-    }
-    deletePlant();
+router.get("/:plantId/delete", async (req, res, next) => {
+    await Plant.findByIdAndDelete(req.params.plantId);
+    res.redirect("/plants");
 });
 
 // GET: edit plant
-router.get("/:plantId/edit", (req, res, next) => {
-    async function getPlantDetailsEdit() {
-        const result = await Plant.findById(req.params.plantId);
-        res.render("plants/plant-edit.hbs", result);
-    }
-    getPlantDetailsEdit();
+router.get("/:plantId/edit", async (req, res, next) => {
+    const result = await Plant.findById(req.params.plantId);
+    res.render("plants/plant-edit.hbs", result);
 });
 
 // POST: edit plant
-router.post("/:plantId/edit", (req, res, next) => {
-    async function editPlantDetails() {
-        const result = await Plant.findByIdAndUpdate(
-            req.params.plantId,
-            req.body
-        );
-        res.redirect(`/plants/${req.params.plantId}`);
-    }
-    editPlantDetails();
+router.post("/:plantId/edit", async (req, res, next) => {
+    const result = await Plant.findByIdAndUpdate(req.params.plantId, req.body);
+    res.redirect(`/plants/${req.params.plantId}`);
 });
 
-// POST: edit plant
-router.post("/:plantId/addevent", (req, res, next) => {
-    async function addHistoryItem() {
-        const result = await PlantHistory.create({
-            category: req.body.category,
-            description: req.body.description,
-            date: formatDate(new Date()),
-            plant: req.params.plantId,
-        });
-        res.redirect(`/plants/${req.params.plantId}`);
-    }
-    addHistoryItem();
+// POST: Add Plant History document
+router.post("/:plantId/addevent", async (req, res, next) => {
+    await PlantHistory.create({
+        category: req.body.category,
+        description: req.body.description,
+        date: formatDate(new Date()),
+        plant: req.params.plantId,
+    });
+    res.redirect(`/plants/${req.params.plantId}`);
 });
+
 module.exports = router;

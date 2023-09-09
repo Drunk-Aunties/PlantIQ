@@ -1,4 +1,4 @@
-<div class="flex flex-wrap justify-center items-center w-screen md:w-screen gap-10 m-0" id="method-select">
+<div class="flex flex-wrap justify-center items-center w-screen gap-10 mt-5" id="method-select">
     <button id="btn-AI-recon" onclick="showForm()" class="h-full">
         <img src="/images/search-with-AI.png" alt="Search with AI card" class="max-h-72">
     </button>
@@ -6,6 +6,8 @@
         <img src="/images/search-manual.png" alt="Seach manually card" class="max-h-72">
     </button>
 </div>
+
+
 
 <form action="/plants/create" method="post" enctype="multipart/form-data" id="form-AI" class="hidden">
     <div class="min-h-max p-6 bg-green-50 flex items-center justify-center">
@@ -73,28 +75,3 @@
         plant...</h1>
     <img src="/images/connecting.gif" alt="" class="h-full w-auto">
 </div>
-
-<script>
-    var myDate = document.getElementById('registrationDate');
-    var today = new Date();
-    myDate.value = today.toISOString().substr(0, 10);
-
-    function showForm() {
-        let form = document.getElementById("form-AI");
-        form.classList.toggle("hidden");
-        let blabla = document.getElementById("method-select");
-        blabla.classList.toggle("hidden");
-    }
-    function waitingScreen() {
-        let form = document.getElementById("form-AI");
-        form.classList.toggle("hidden");
-        let blabla = document.getElementById("waiting-screen");
-        blabla.classList.toggle("hidden");
-    }
-    function showSearch() {
-        let form = document.getElementById("form-manual-search");
-        form.classList.toggle("hidden");
-        let blabla = document.getElementById("method-select");
-        blabla.classList.toggle("hidden");
-    }
-</script>
